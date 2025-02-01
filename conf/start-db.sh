@@ -17,5 +17,9 @@ done
 
 docker exec postgres-container psql -U postgres -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';"
 docker exec postgres-container psql -U postgres -c "CREATE DATABASE chatapp;"
+docker exec postgres-container psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE chatapp TO ${DB_USER};"
+docker exec postgres-container psql -U postgres -c "\c chatapp postgres;"
+docker exec postgres-container psql -U postgres -c "GRANT ALL ON SCHEMA public TO ${DB_USER};"
+docker exec postgres-container psql -U postgres -c "ALTER DATABASE chatapp OWNER TO ${DB_USER}"
 
 echo "Database and user created successfully!"
