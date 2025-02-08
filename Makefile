@@ -1,4 +1,4 @@
 
 .PHONY: run
 run:
-	./mvnw spring-boot:run
+	. conf/set_env.sh && ./mvnw spring-boot:run
