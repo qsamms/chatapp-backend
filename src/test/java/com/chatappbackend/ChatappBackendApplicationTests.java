@@ -1,4 +1,4 @@
-package com.example.chatapp_backend;
+package com.chatappbackend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

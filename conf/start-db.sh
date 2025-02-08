@@ -3,6 +3,11 @@
 DIR_NAME=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${DIR_NAME}/set_env.sh"
 
+if pg_isready -h "$PG_HOST" -p "$PG_PORT" -U postgres; then
+  echo "Postgres is already up, exiting..."
+  exit 1
+fi
+
 docker run -d --name postgres-container -p 5432:5432 -e POSTGRES_PASSWORD=${DB_PASSWORD} postgres:latest
 
 echo "Waiting for postgres to come up..."
@@ -11,7 +16,8 @@ until pg_isready -h "$PG_HOST" -p "$PG_PORT" -U postgres; do
   sleep 2
   ((count++))
   if [ $count -gt 5 ]; then
-    echo "Waited 10 seconds, removing postgres-container and exiting."
+    echo "Waited 10 seconds and postgres is still not accepting connections, something went wrong. \
+      Removing postgres-container and exiting."
     docker remove postgres-container
     exit 1
   fi
