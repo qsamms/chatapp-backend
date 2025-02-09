@@ -5,7 +5,7 @@ run:
 
 .PHONY: install
 install:
-	mvn clean install -DskipTests
+	mvn dependency:resolve
 
 .PHONY: test_local
 test_local:

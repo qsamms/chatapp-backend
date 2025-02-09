@@ -8,6 +8,7 @@ import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.JwtUtil;
 import com.chatappbackend.utils.MapUtil;
 import java.util.Map;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -31,7 +34,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<Map<String, Object>> login(@RequestBody AuthRequest request) {
+  public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody AuthRequest request) {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
@@ -41,7 +44,7 @@ public class AuthController {
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<Map<String, Object>> signup(@RequestBody SignUpRequest request) {
+  public ResponseEntity<Map<String, Object>> signup(@Valid @RequestBody SignUpRequest request) {
     try {
       User newUser =
           userService.createUser(request.getUsername(), request.getPassword(), request.getEmail());
@@ -53,7 +56,7 @@ public class AuthController {
       return ResponseEntity.ok(MapUtil.toMap(response));
     } catch (DataIntegrityViolationException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(Map.of("error", "Error creating user: " + e.getMessage()));
+          .body(Map.of("error", "Error creating user"));
     }
   }
 }
