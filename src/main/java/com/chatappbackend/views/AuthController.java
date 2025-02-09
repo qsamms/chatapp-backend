@@ -4,8 +4,7 @@ import com.chatappbackend.dto.AuthRequest;
 import com.chatappbackend.dto.SignUpRequest;
 import com.chatappbackend.dto.SignUpResponse;
 import com.chatappbackend.models.User;
-import com.chatappbackend.repository.UserRepository;
-import com.chatappbackend.service.CustomUserDetailsService;
+import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.JwtUtil;
 import com.chatappbackend.utils.MapUtil;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,21 +21,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
   private final AuthenticationManager authenticationManager;
   private final JwtUtil jwtUtil;
-  private final CustomUserDetailsService userDetailsService;
-  private final PasswordEncoder passwordEncoder;
-  private final UserRepository userRepository;
+  private final UserService userService;
 
   public AuthController(
-      AuthenticationManager authManager,
-      JwtUtil jwtUtil,
-      CustomUserDetailsService userDetailsService,
-      PasswordEncoder passwordEncoder,
-      UserRepository userRepository) {
+      AuthenticationManager authManager, JwtUtil jwtUtil, UserService userService) {
     this.authenticationManager = authManager;
     this.jwtUtil = jwtUtil;
-    this.userDetailsService = userDetailsService;
-    this.passwordEncoder = passwordEncoder;
-    this.userRepository = userRepository;
+    this.userService = userService;
   }
 
   @PostMapping("/login")
@@ -45,7 +35,7 @@ public class AuthController {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-    UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+    UserDetails userDetails = userService.getUser(request.getUsername());
     String token = jwtUtil.generateToken(userDetails.getUsername());
     return ResponseEntity.ok(Map.of("token", token));
   }
@@ -53,18 +43,12 @@ public class AuthController {
   @PostMapping("/signup")
   public ResponseEntity<Map<String, Object>> signup(@RequestBody SignUpRequest request) {
     try {
-      User user =
-          User.builder()
-              .username(request.getUsername())
-              .password(passwordEncoder.encode(request.getPassword()))
-              .email(request.getEmail())
-              .enabled(true)
-              .build();
-      User savedUser = userRepository.save(user);
+      User newUser =
+          userService.createUser(request.getUsername(), request.getPassword(), request.getEmail());
       SignUpResponse response =
           SignUpResponse.builder()
-              .username(savedUser.getUsername())
-              .email(savedUser.getEmail())
+              .username(newUser.getUsername())
+              .email(newUser.getEmail())
               .build();
       return ResponseEntity.ok(MapUtil.toMap(response));
     } catch (DataIntegrityViolationException e) {

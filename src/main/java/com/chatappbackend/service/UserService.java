@@ -8,11 +8,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
   private final UserRepository userRepository;
+  private final CustomUserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
 
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  public UserService(
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      CustomUserDetailsService userDetailsService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.userDetailsService = userDetailsService;
   }
 
   public User createUser(String username, String rawPassword, String email) {
@@ -24,5 +29,9 @@ public class UserService {
             .enabled(true)
             .build();
     return userRepository.save(user);
+  }
+
+  public User getUser(String username) {
+    return userDetailsService.loadUserByUsername(username);
   }
 }
