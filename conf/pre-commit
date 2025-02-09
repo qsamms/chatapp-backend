@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "Running Spotless..."
+mvn spotless:apply
+
+if ! git diff --quiet; then
+  exit 1
+fi

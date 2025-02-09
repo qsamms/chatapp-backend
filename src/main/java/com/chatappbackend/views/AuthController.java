@@ -7,8 +7,8 @@ import com.chatappbackend.models.User;
 import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.JwtUtil;
 import com.chatappbackend.utils.MapUtil;
+import jakarta.validation.Valid;
 import java.util.Map;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
-
 
 @RestController
 @RequestMapping("/auth")

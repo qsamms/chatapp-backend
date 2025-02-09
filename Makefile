@@ -10,3 +10,7 @@ install:
 .PHONY: test_local
 test_local:
 	. conf/set_env.sh && mvn test
+
+.PHONY: pre-commit-install
+pre-commit-install:
+	cp conf/pre-commit .git/hooks/pre-commit
