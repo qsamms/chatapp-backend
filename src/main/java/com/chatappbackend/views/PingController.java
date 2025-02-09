@@ -1,4 +1,4 @@
-package com.chatappbackend;
+package com.chatappbackend.views;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

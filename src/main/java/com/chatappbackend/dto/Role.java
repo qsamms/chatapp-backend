@@ -1,4 +1,4 @@
-package com.chatappbackend.models;
+package com.chatappbackend.dto;
 
 public enum Role {
   USER,
