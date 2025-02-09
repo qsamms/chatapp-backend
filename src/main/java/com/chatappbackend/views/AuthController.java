@@ -41,13 +41,13 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody AuthRequest request) {
+  public ResponseEntity<Map<String, Object>> login(@RequestBody AuthRequest request) {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
     UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
     String token = jwtUtil.generateToken(userDetails.getUsername());
-    return ResponseEntity.ok(token);
+    return ResponseEntity.ok(Map.of("token", token));
   }
 
   @PostMapping("/signup")
