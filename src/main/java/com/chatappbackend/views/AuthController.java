@@ -9,8 +9,6 @@ import com.chatappbackend.utils.JwtUtil;
 import com.chatappbackend.utils.MapUtil;
 import jakarta.validation.Valid;
 import java.util.Map;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,18 +41,10 @@ public class AuthController {
 
   @PostMapping("/signup")
   public ResponseEntity<Map<String, Object>> signup(@Valid @RequestBody SignUpRequest request) {
-    try {
-      User newUser =
-          userService.createUser(request.getUsername(), request.getPassword(), request.getEmail());
-      SignUpResponse response =
-          SignUpResponse.builder()
-              .username(newUser.getUsername())
-              .email(newUser.getEmail())
-              .build();
-      return ResponseEntity.ok(MapUtil.toMap(response));
-    } catch (DataIntegrityViolationException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .body(Map.of("error", "Error creating user"));
-    }
+    User newUser =
+        userService.createUser(request.getUsername(), request.getPassword(), request.getEmail());
+    SignUpResponse response =
+        SignUpResponse.builder().username(newUser.getUsername()).email(newUser.getEmail()).build();
+    return ResponseEntity.ok(MapUtil.toMap(response));
   }
 }

@@ -3,6 +3,9 @@ package com.chatappbackend.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -25,6 +28,32 @@ public class GlobalExceptionHandler {
       errorsList.add(error.getDefaultMessage());
     }
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<Map<String, String>> handleDataIntegrityException(Exception ex) {
+    class Utils {
+      public static String sanitizeDataIntegrityViolation(String message) {
+        if (message.contains("already exists")) {
+          String key = extractKey(message);
+          return "A user with that " + key + " already exists";
+        }
+        return "Error creating user";
+      }
+
+      private static String extractKey(String message) {
+        Pattern pattern = Pattern.compile("\\(([^)]+)\\)=\\(([^)]+)\\)");
+        Matcher matcher = pattern.matcher(message);
+
+        if (matcher.find()) {
+          return matcher.group(1);
+        }
+        return null;
+      }
+    }
+    Map<String, String> response = new HashMap<>();
+    response.put("error", Utils.sanitizeDataIntegrityViolation(ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
 
   @ExceptionHandler(AuthenticationException.class)
