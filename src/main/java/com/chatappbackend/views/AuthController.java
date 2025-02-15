@@ -9,6 +9,7 @@ import com.chatappbackend.utils.JwtUtil;
 import com.chatappbackend.utils.MapUtil;
 import jakarta.validation.Valid;
 import java.util.Map;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,6 +46,6 @@ public class AuthController {
         userService.createUser(request.getUsername(), request.getPassword(), request.getEmail());
     SignUpResponse response =
         SignUpResponse.builder().username(newUser.getUsername()).email(newUser.getEmail()).build();
-    return ResponseEntity.ok(MapUtil.toMap(response));
+    return ResponseEntity.status(HttpStatus.CREATED).body(MapUtil.toMap(response));
   }
 }
