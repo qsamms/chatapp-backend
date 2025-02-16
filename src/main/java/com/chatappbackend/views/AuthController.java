@@ -30,7 +30,7 @@ public class AuthController {
     this.userService = userService;
   }
 
-  @PostMapping("/login")
+  @PostMapping("/login/")
   public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody AuthRequest request) {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
@@ -40,7 +40,7 @@ public class AuthController {
     return ResponseEntity.ok(Map.of("token", token));
   }
 
-  @PostMapping("/signup")
+  @PostMapping("/signup/")
   public ResponseEntity<Map<String, Object>> signup(@Valid @RequestBody SignUpRequest request) {
     User newUser =
         userService.createUser(request.getUsername(), request.getPassword(), request.getEmail());

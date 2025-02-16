@@ -34,11 +34,11 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Map<String, String>> handleDataIntegrityException(Exception ex) {
     class Utils {
       public static String sanitizeDataIntegrityViolation(String message) {
-        if (message.contains("already exists")) {
+        if (message.contains("user") && message.contains("already exists")) {
           String key = extractKey(message);
           return "A user with that " + key + " already exists";
         }
-        return "Error creating user";
+        return "Error creating data";
       }
 
       private static String extractKey(String message) {
