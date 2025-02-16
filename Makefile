@@ -16,3 +16,6 @@ pre-commit-install:
 	cp conf/pre-commit .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
 
+.PHONY: build
+build:
+	docker build -t chatapp-backend .
