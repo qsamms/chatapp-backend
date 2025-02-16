@@ -1,4 +1,4 @@
-package com.chatappbackend.dto;
+package com.chatappbackend.dto.auth;
 
 import lombok.Builder;
 import lombok.Getter;

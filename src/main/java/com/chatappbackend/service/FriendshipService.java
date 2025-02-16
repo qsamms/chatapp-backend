@@ -1,11 +1,10 @@
 package com.chatappbackend.service;
 
-import com.chatappbackend.dto.FriendshipStatus;
+import com.chatappbackend.dto.friendship.FriendshipStatus;
 import com.chatappbackend.models.Friendship;
 import com.chatappbackend.models.User;
 import com.chatappbackend.repository.FriendshipRepository;
 import com.chatappbackend.repository.UserRepository;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +35,6 @@ public class FriendshipService {
             .user1(user1)
             .user2(user2)
             .friendshipStatus(FriendshipStatus.PENDING)
-            .createdAt(LocalDateTime.now())
-            .updatedAt(LocalDateTime.now())
             .build();
     return friendshipRepository.save(friendship);
   }

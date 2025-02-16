@@ -1,7 +1,7 @@
 package com.chatappbackend.views;
 
-import com.chatappbackend.dto.FriendshipRequest;
-import com.chatappbackend.dto.ListFriendsRequest;
+import com.chatappbackend.dto.friendship.FriendshipRequest;
+import com.chatappbackend.dto.friendship.ListFriendsRequest;
 import com.chatappbackend.models.Friendship;
 import com.chatappbackend.service.FriendshipService;
 import com.chatappbackend.utils.MapUtil;

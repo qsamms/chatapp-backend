@@ -1,6 +1,6 @@
 package com.chatappbackend.models;
 
-import com.chatappbackend.dto.Role;
+import com.chatappbackend.dto.user.Role;
 import jakarta.persistence.*;
 import java.util.Set;
 import lombok.*;
@@ -33,6 +33,7 @@ public class User implements UserDetails {
   private Role role;
 
   @Column(nullable = false)
+  @Builder.Default
   private boolean enabled = true;
 
   @Override

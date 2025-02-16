@@ -1,4 +1,4 @@
-package com.chatappbackend.dto;
+package com.chatappbackend.dto.friendship;
 
 public enum FriendshipStatus {
   PENDING,

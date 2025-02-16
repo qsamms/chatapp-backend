@@ -1,8 +1,8 @@
 package com.chatappbackend.views;
 
-import com.chatappbackend.dto.AuthRequest;
-import com.chatappbackend.dto.SignUpRequest;
-import com.chatappbackend.dto.SignUpResponse;
+import com.chatappbackend.dto.auth.AuthRequest;
+import com.chatappbackend.dto.auth.SignUpRequest;
+import com.chatappbackend.dto.auth.SignUpResponse;
 import com.chatappbackend.models.User;
 import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.JwtUtil;

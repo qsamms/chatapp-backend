@@ -1,6 +1,6 @@
 package com.chatappbackend.repository;
 
-import com.chatappbackend.dto.FriendshipStatus;
+import com.chatappbackend.dto.friendship.FriendshipStatus;
 import com.chatappbackend.models.Friendship;
 import com.chatappbackend.models.User;
 import java.util.List;

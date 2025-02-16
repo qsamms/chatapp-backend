@@ -1,4 +1,4 @@
-package com.chatappbackend.dto;
+package com.chatappbackend.dto.friendship;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.chatappbackend.models;
 
-import com.chatappbackend.dto.FriendshipStatus;
+import com.chatappbackend.dto.friendship.FriendshipStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.*;
@@ -30,9 +30,11 @@ public class Friendship {
   private FriendshipStatus friendshipStatus;
 
   @Column(nullable = false)
+  @Builder.Default
   private LocalDateTime createdAt = LocalDateTime.now();
 
   @Column(nullable = false)
+  @Builder.Default
   private LocalDateTime updatedAt = LocalDateTime.now();
 
   @PreUpdate
