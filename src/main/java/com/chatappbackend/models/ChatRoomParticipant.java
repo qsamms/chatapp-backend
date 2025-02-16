@@ -25,8 +25,7 @@ public class ChatRoomParticipant {
   @JoinColumn(nullable = false)
   private ChatRoom chatRoom;
 
-  @Column(nullable = false)
-  private LocalDateTime joinedAt;
+  @Column private LocalDateTime joinedAt;
 
   @Column(nullable = false)
   @Builder.Default

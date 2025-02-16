@@ -7,5 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ListFriendsRequest {
-  @NotBlank private String status;
+  @NotBlank(message = "status is required")
+  private String status;
 }

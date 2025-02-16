@@ -10,7 +10,9 @@ import com.chatappbackend.repository.MessageRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ChatService {
   private final ChatRoomParticipantRepository chatRoomParticipantRepository;
   private final ChatRoomRepository chatRoomRepository;
@@ -33,12 +35,24 @@ public class ChatService {
     return chatRoomParticipantRepository.findByChatRoom(chatRoom);
   }
 
+  public ChatRoomParticipant saveChatParticipant(ChatRoomParticipant chatRoomParticipant) {
+    return chatRoomParticipantRepository.save(chatRoomParticipant);
+  }
+
   public List<ChatRoom> getAcceptedUserChatRooms(Long userId) {
     return chatRoomRepository.findAcceptedChatRoomsByUserId(userId);
   }
 
   public List<ChatRoom> getInvitedUserChatRooms(Long userId) {
     return chatRoomRepository.findInvitedCharRoomsByUserId(userId);
+  }
+
+  public ChatRoom getChatRoom(UUID chatRoomId) {
+    return chatRoomRepository.findById(chatRoomId).orElseThrow();
+  }
+
+  public ChatRoom saveChatRoom(ChatRoom chatRoom) {
+    return chatRoomRepository.save(chatRoom);
   }
 
   public List<ChatRoom> getChatRoomsCreatedByUser(User user) {
@@ -51,5 +65,13 @@ public class ChatService {
 
   public List<Message> getUserMessagesInChatRoom(UUID chatRoomId, Long userId) {
     return messageRepository.findMessagesByChatRoomAndUser(chatRoomId, userId);
+  }
+
+  public void acceptChatRoomInvitation(UUID chatRoomId, User user) {
+    ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow();
+    ChatRoomParticipant chatRoomParticipant =
+        chatRoomParticipantRepository.findByChatRoomAndUser(chatRoom, user).orElseThrow();
+    chatRoomParticipant.setHasAccepted(true);
+    chatRoomParticipantRepository.save(chatRoomParticipant);
   }
 }

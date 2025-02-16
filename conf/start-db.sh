@@ -8,7 +8,12 @@ if pg_isready -h "$PG_HOST" -p "$PG_PORT" -U postgres; then
   exit 1
 fi
 
-docker run -d --name postgres-container -p 5432:5432 -e POSTGRES_PASSWORD=${DB_PASSWORD} postgres:latest
+if ! docker volume ls | grep -q pg_data; then
+  echo "Volume pg_data does not exist. Creating it."
+  docker volume create pg_data
+fi
+
+docker run -d --name postgres-container -p 5432:5432 -e POSTGRES_PASSWORD=${DB_PASSWORD} -v pg_data:/var/lib/postgresql/data postgres:latest
 
 echo "Waiting for postgres to come up..."
 count=0
