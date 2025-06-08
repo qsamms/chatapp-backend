@@ -3,6 +3,11 @@
 DIR_NAME=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "${DIR_NAME}/set_env.sh"
 
+if docker ps -a | grep -i postgres-container; then
+  echo "Postgres container exists, removing it"
+  docker remove postgres-container
+fi
+
 if pg_isready -h "$PG_HOST" -p "$PG_PORT" -U postgres; then
   echo "Postgres is already up, exiting..."
   exit 1
