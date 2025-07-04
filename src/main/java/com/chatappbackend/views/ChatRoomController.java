@@ -52,6 +52,19 @@ public class ChatRoomController {
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("rooms", chatRooms));
   }
 
+  @GetMapping("/{roomId}/messages/")
+  public ResponseEntity<Map<String, Object>> getMessages(@PathVariable UUID roomId) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    User currentUser = userService.getUser(authentication.getName());
+    ChatRoom chatRoom = chatService.getChatRoom(roomId);
+    if (!chatService.isUserInChatRoom(currentUser, chatRoom)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body(Map.of("message", "User is not in the requested chat room"));
+    }
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(Map.of("messages", chatService.getMessagesInChatRoom(roomId)));
+  }
+
   @PostMapping("/{roomId}/invite/")
   public ResponseEntity<Map<String, Object>> invite(
       @PathVariable UUID roomId, @Valid @RequestBody InviteRequest req) {

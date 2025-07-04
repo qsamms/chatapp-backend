@@ -74,4 +74,12 @@ public class ChatService {
     chatRoomParticipant.setHasAccepted(true);
     chatRoomParticipantRepository.save(chatRoomParticipant);
   }
+
+  public Message saveMessage(Message message) {
+    return messageRepository.save(message);
+  }
+
+  public boolean isUserInChatRoom(User user, ChatRoom chatRoom) {
+    return chatRoomParticipantRepository.existsByChatRoomAndUser(chatRoom, user);
+  }
 }
