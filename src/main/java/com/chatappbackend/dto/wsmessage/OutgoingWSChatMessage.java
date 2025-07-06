@@ -1,4 +1,4 @@
-package com.chatappbackend.dto.chatmessage;
+package com.chatappbackend.dto.wsmessage;
 
 import com.chatappbackend.models.Message;
 import java.time.LocalDateTime;

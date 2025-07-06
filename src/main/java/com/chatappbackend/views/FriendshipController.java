@@ -2,14 +2,11 @@ package com.chatappbackend.views;
 
 import com.chatappbackend.dto.friendship.FriendshipRequest;
 import com.chatappbackend.dto.friendship.ListFriendsRequest;
-import com.chatappbackend.models.Friendship;
 import com.chatappbackend.service.FriendshipService;
 import com.chatappbackend.utils.MapUtil;
 import jakarta.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,18 +30,23 @@ public class FriendshipController {
 
   @PostMapping("/accept/{friendshipId}/")
   public ResponseEntity<Map<String, Object>> accept(@PathVariable Long friendshipId) {
-    return ResponseEntity.status(HttpStatus.OK)
+    return ResponseEntity.ok()
         .body(MapUtil.toMap(friendshipService.acceptFriendRequest(friendshipId)));
   }
 
   @DeleteMapping("/{friendshipId}/")
-  public void removeFriend(@PathVariable Long friendshipId) {
+  public ResponseEntity<Map<String, Object>> removeFriend(@PathVariable Long friendshipId) {
     friendshipService.removeFriend(friendshipId);
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping("/")
-  public List<Friendship> getFriends(
+  public ResponseEntity<Map<String, Object>> getFriends(
       @Valid @RequestBody ListFriendsRequest listFriendsRequest, Principal principal) {
-    return friendshipService.getFriends(principal.getName(), listFriendsRequest.getStatus());
+    return ResponseEntity.ok()
+        .body(
+            Map.of(
+                "messages",
+                friendshipService.getFriends(principal.getName(), listFriendsRequest.getStatus())));
   }
 }

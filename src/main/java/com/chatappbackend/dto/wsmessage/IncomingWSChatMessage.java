@@ -1,4 +1,4 @@
-package com.chatappbackend.dto.chatmessage;
+package com.chatappbackend.dto.wsmessage;
 
 import java.util.UUID;
 import lombok.Getter;

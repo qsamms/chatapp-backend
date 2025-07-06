@@ -1,7 +1,7 @@
 package com.chatappbackend.ws;
 
-import com.chatappbackend.dto.chatmessage.IncomingWSChatMessage;
-import com.chatappbackend.dto.chatmessage.OutgoingWSChatMessage;
+import com.chatappbackend.dto.wsmessage.IncomingWSChatMessage;
+import com.chatappbackend.dto.wsmessage.OutgoingWSChatMessage;
 import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.Message;
 import com.chatappbackend.models.User;
