@@ -25,7 +25,7 @@ const consumerClient = new Client({
   onConnect: () => {
     console.log('[CONSUMER CONNECTED]');
 
-    consumerClient.subscribe(`/topic/chatroom.${chatRoom}`, (message) => {
+    consumerClient.subscribe(`/topic/chatroom/${chatRoom}/`, (message) => {
       console.log('[RECEIVED MESSAGE]', message.body);
     });
   },

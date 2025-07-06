@@ -26,7 +26,7 @@ const producerClient = new Client({
     console.log('[PRODUCER CONNECTED]');
     setInterval(() => {
       producerClient.publish({
-        destination: '/app/sendMessage',
+        destination: `/app/chatroom/${chatRoom}/send/`,
         body: JSON.stringify({
           content: `Ping at ${new Date().toISOString()}`,
           chatRoomId: chatRoom,

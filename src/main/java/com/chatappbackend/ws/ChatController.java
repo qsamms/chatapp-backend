@@ -8,6 +8,8 @@ import com.chatappbackend.models.User;
 import com.chatappbackend.service.ChatService;
 import com.chatappbackend.service.UserService;
 import java.security.Principal;
+import java.util.UUID;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
@@ -26,18 +28,19 @@ public class ChatController {
     this.messagingTemplate = messagingTemplate;
   }
 
-  @MessageMapping("/sendMessage")
-  public void sendMessage(IncomingWSChatMessage message, Principal principal)
+  @MessageMapping("/chatroom/{roomId}/send/")
+  public void sendMessage(
+      @DestinationVariable UUID roomId, IncomingWSChatMessage message, Principal principal)
       throws AccessDeniedException {
     if (principal == null) {
       throw new AccessDeniedException("Unauthorized websocket message");
     }
 
     User user = userService.getUser(principal.getName());
-    ChatRoom chatRoom = chatService.getChatRoom(message.getChatRoomId());
+    ChatRoom chatRoom = chatService.getChatRoom(roomId);
 
     messagingTemplate.convertAndSend(
-        "/topic/chatroom." + chatRoom.getId(),
+        "/topic/chatroom/" + roomId + "/",
         new OutgoingWSChatMessage(
             chatService.saveMessage(
                 Message.builder()

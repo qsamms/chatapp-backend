@@ -1,6 +1,7 @@
 package com.chatappbackend.views;
 
 import com.chatappbackend.dto.chatroom.ChatRoomDTO;
+import com.chatappbackend.dto.message.MessageBetween;
 import com.chatappbackend.dto.message.MessageDTO;
 import com.chatappbackend.dto.rooms.CreateRoomRequest;
 import com.chatappbackend.dto.rooms.InviteRequest;
@@ -102,8 +103,7 @@ public class ChatRoomController {
   }
 
   @GetMapping("/{roomId}/messages/")
-  public ResponseEntity<Map<String, Object>> getMessages(
-      @PathVariable UUID roomId, Principal principal) {
+  public ResponseEntity<?> getMessages(@PathVariable UUID roomId, Principal principal) {
     User reqUser = userService.getUser(principal.getName());
 
     ChatRoom chatRoom = chatService.getChatRoom(roomId);
@@ -113,10 +113,48 @@ public class ChatRoomController {
     }
 
     return ResponseEntity.ok()
-        .body(
-            Map.of(
-                "messages",
-                chatService.getMessagesInChatRoom(roomId).stream().map(MessageDTO::new).toList()));
+        .body(chatService.getMessagesInChatRoom(roomId).stream().map(MessageDTO::new).toList());
+  }
+
+  @PostMapping("/{roomId}/messages/")
+  public ResponseEntity<?> getMessagesBetween(
+      @PathVariable UUID roomId, @RequestBody MessageBetween req, Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+
+    ChatRoom chatRoom = chatService.getChatRoom(roomId);
+    if (!chatService.isUserInChatRoom(reqUser, chatRoom)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body(Map.of("message", "User is not in the requested chat room"));
+    }
+
+    LocalDateTime start = req.getStart();
+    LocalDateTime end = req.getEnd();
+
+    if (start != null && end != null && end.isBefore(start))
+      return ResponseEntity.badRequest()
+          .body(Map.of("message", "Start time must be before end time"));
+
+    System.out.println(start);
+    System.out.println(end);
+    List<MessageDTO> messages;
+    if (start != null && end != null) {
+      messages =
+          chatService.getMessagesInChatRoom(chatRoom.getId(), start, end).stream()
+              .map(MessageDTO::new)
+              .toList();
+    } else if (start != null) {
+      messages =
+          chatService.getMessagesInChatRoom(chatRoom.getId(), start).stream()
+              .map(MessageDTO::new)
+              .toList();
+    } else {
+      messages =
+          chatService.getMessagesInChatRoom(chatRoom.getId()).stream()
+              .map(MessageDTO::new)
+              .toList();
+    }
+
+    return ResponseEntity.ok().body(messages);
   }
 
   @PostMapping("/{roomId}/invite/")

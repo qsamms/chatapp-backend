@@ -61,7 +61,18 @@ public class ChatService {
   }
 
   public List<Message> getMessagesInChatRoom(UUID chatRoomId) {
-    return messageRepository.findByChatRoomIdOrderByTimestampAsc(chatRoomId);
+    return messageRepository.findByChatRoomIdOrderByTimestampDesc(chatRoomId);
+  }
+
+  public List<Message> getMessagesInChatRoom(
+      UUID chatRoomId, LocalDateTime start, LocalDateTime end) {
+    return messageRepository.findByChatRoomIdAndTimestampBetweenOrderByTimestampDesc(
+        chatRoomId, start, end);
+  }
+
+  public List<Message> getMessagesInChatRoom(UUID chatRoomId, LocalDateTime start) {
+    return messageRepository.findByChatRoomIdAndTimestampAfterOrderByTimestampDesc(
+        chatRoomId, start);
   }
 
   public List<Message> getUserMessagesInChatRoom(UUID chatRoomId, Long userId) {
