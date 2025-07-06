@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,12 +66,12 @@ public class ChatRoomController {
     List<ChatRoomDTO> acceptedChatRooms =
         chatService.getAcceptedUserChatRooms(reqUser.getId()).stream()
             .map(ChatRoomDTO::new)
-            .collect(Collectors.toList());
+            .toList();
 
     List<ChatRoomDTO> invitedChatRooms =
         chatService.getInvitedUserChatRooms(reqUser.getId()).stream()
             .map(ChatRoomDTO::new)
-            .collect(Collectors.toList());
+            .toList();
 
     return ResponseEntity.ok()
         .body(Map.of("accepted", acceptedChatRooms, "invited", invitedChatRooms));
@@ -85,7 +84,7 @@ public class ChatRoomController {
     List<ChatRoomDTO> chatRooms =
         chatService.getAcceptedUserChatRooms(reqUser.getId()).stream()
             .map(ChatRoomDTO::new)
-            .collect(Collectors.toList());
+            .toList();
 
     return ResponseEntity.ok().body(chatRooms);
   }
@@ -97,7 +96,7 @@ public class ChatRoomController {
     List<ChatRoomDTO> chatRooms =
         chatService.getInvitedUserChatRooms(reqUser.getId()).stream()
             .map(ChatRoomDTO::new)
-            .collect(Collectors.toList());
+            .toList();
 
     return ResponseEntity.ok().body(chatRooms);
   }
@@ -117,9 +116,7 @@ public class ChatRoomController {
         .body(
             Map.of(
                 "messages",
-                chatService.getMessagesInChatRoom(roomId).stream()
-                    .map(MessageDTO::new)
-                    .collect(Collectors.toList())));
+                chatService.getMessagesInChatRoom(roomId).stream().map(MessageDTO::new).toList()));
   }
 
   @PostMapping("/{roomId}/invite/")

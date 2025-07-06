@@ -1,10 +1,10 @@
 package com.chatappbackend.dto.chatroom;
 
 import com.chatappbackend.models.ChatRoom;
+import com.chatappbackend.models.ChatRoomParticipant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.Getter;
 
 @Getter
@@ -26,7 +26,8 @@ public class ChatRoomDTO {
     this.createdBy = chatRoom.getCreatedBy().getUsername();
     this.participants =
         chatRoom.getParticipants().stream()
+            .filter(ChatRoomParticipant::getHasAccepted)
             .map(participant -> participant.getUser().getUsername())
-            .collect(Collectors.toList());
+            .toList();
   }
 }

@@ -21,7 +21,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
   SELECT f FROM Friendship f
   WHERE (f.user1 = :user OR f.user2 = :user)
   AND f.sender <> :user
-  AND f.status = :status
+  AND f.friendshipStatus = :status
   """)
   List<Friendship> findFriendshipsWhereUserIsNotSender(
       @Param("user") User user, @Param("status") FriendshipStatus status);
