@@ -1,5 +1,6 @@
 package com.chatappbackend.service;
 
+import com.chatappbackend.dto.user.Role;
 import com.chatappbackend.models.User;
 import com.chatappbackend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +27,7 @@ public class UserService {
             .username(username)
             .password(passwordEncoder.encode(rawPassword))
             .email(email)
-            .enabled(true)
+            .role(Role.USER)
             .build();
     return userRepository.save(user);
   }

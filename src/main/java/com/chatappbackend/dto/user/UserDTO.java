@@ -1,7 +1,9 @@
 package com.chatappbackend.dto.user;
 
 import com.chatappbackend.models.User;
+import lombok.Getter;
 
+@Getter
 public class UserDTO {
   private Long id;
 
@@ -9,12 +11,12 @@ public class UserDTO {
 
   private String email;
 
-  private Role role;
+  private String role;
 
   public UserDTO(User user) {
     this.id = user.getId();
     this.username = user.getUsername();
     this.email = user.getEmail();
-    this.role = user.getRole();
+    this.role = (user.getRole() != null) ? user.getRole().name() : null;
   }
 }
