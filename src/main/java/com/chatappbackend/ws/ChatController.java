@@ -1,6 +1,7 @@
 package com.chatappbackend.ws;
 
 import com.chatappbackend.dto.chatmessage.ChatMessage;
+import com.chatappbackend.dto.chatmessage.OutgoingWSChatMessage;
 import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.Message;
 import com.chatappbackend.models.User;
@@ -33,14 +34,15 @@ public class ChatController {
 
     User user = userService.getUser(principal.getName());
     ChatRoom chatRoom = chatService.getChatRoom(message.getChatRoomId());
-    Message msg =
-        chatService.saveMessage(
-            Message.builder()
-                .content(message.getContent())
-                .sender(user)
-                .chatRoom(chatRoom)
-                .build());
 
-    messagingTemplate.convertAndSend("/topic/chatroom." + chatRoom.getId(), msg);
+    messagingTemplate.convertAndSend(
+        "/topic/chatroom." + chatRoom.getId(),
+        new OutgoingWSChatMessage(
+            chatService.saveMessage(
+                Message.builder()
+                    .content(message.getContent())
+                    .sender(user)
+                    .chatRoom(chatRoom)
+                    .build())));
   }
 }

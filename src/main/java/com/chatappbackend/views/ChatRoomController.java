@@ -10,6 +10,7 @@ import com.chatappbackend.service.ChatService;
 import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.MapUtil;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,7 +35,16 @@ public class ChatRoomController {
   public ResponseEntity<Map<String, Object>> createRoom(@Valid @RequestBody CreateRoomRequest req) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     User reqUser = userService.getUser(authentication.getName());
-    ChatRoom chatRoom = ChatRoom.builder().createdBy(reqUser).name(req.getName()).build();
+    ChatRoom chatRoom =
+        chatService.saveChatRoom(ChatRoom.builder().createdBy(reqUser).name(req.getName()).build());
+    ChatRoomParticipant participant =
+        ChatRoomParticipant.builder()
+            .user(reqUser)
+            .chatRoom(chatRoom)
+            .joinedAt(LocalDateTime.now())
+            .hasAccepted(true)
+            .build();
+    chatService.saveChatParticipant(participant);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(MapUtil.toMap(chatService.saveChatRoom(chatRoom)));
   }
