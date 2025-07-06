@@ -1,6 +1,14 @@
 const { Client } = require('@stomp/stompjs');
 const WebSocket = require('ws');
 
+const jwtToken = process.argv[2];
+const chatRoom = process.argv[3];
+
+if (!jwtToken || !chatRoom) {
+  console.error('Usage: node consumer.js <JWT_TOKEN> <chatRoom>');
+  process.exit(1);
+}
+
 const producerClient = new Client({
   debug: (str) => {
     console.log('[PRODUCER DEBUG]', str);
@@ -11,7 +19,7 @@ const producerClient = new Client({
   webSocketFactory: () =>
     new WebSocket('ws://localhost:8080/ws', {
       headers: {
-        Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJxc2FtbXMxMTExMTExIiwiaWF0IjoxNzUxNzgwMjI2LCJleHAiOjE3NTE3ODM4MjZ9.NaWwB4-7R_KRDrNg3VOO9I0M2uKpYX5hSWXw6IbqEX0',
+        Authorization: `Bearer ${jwtToken}`,
       },
     }),
   onConnect: () => {
@@ -20,9 +28,8 @@ const producerClient = new Client({
       producerClient.publish({
         destination: '/app/sendMessage',
         body: JSON.stringify({
-          sender: 'tester',
           content: `Ping at ${new Date().toISOString()}`,
-          chatRoomId: '7537b9fe-56a8-4af7-a755-f442953be01f',
+          chatRoomId: chatRoom,
         }),
         headers: { 'content-type': 'application/json' },
       });
