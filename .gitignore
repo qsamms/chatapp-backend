@@ -37,3 +37,4 @@ conf/set_env.sh
 node_modules/
 package-lock.json
 package.json
+uploads/

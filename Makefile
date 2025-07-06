@@ -22,4 +22,6 @@ build:
 
 .PHONY: run-docker
 run-docker:
+	docker stop backend || true
+	docker rm backend || true
 	. conf/set_env.sh && docker compose up backend -d
