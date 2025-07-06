@@ -1,6 +1,6 @@
 package com.chatappbackend.ws;
 
-import com.chatappbackend.dto.chatmessage.ChatMessage;
+import com.chatappbackend.dto.chatmessage.IncomingWSChatMessage;
 import com.chatappbackend.dto.chatmessage.OutgoingWSChatMessage;
 import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.Message;
@@ -27,7 +27,8 @@ public class ChatController {
   }
 
   @MessageMapping("/sendMessage")
-  public void sendMessage(ChatMessage message, Principal principal) throws AccessDeniedException {
+  public void sendMessage(IncomingWSChatMessage message, Principal principal)
+      throws AccessDeniedException {
     if (principal == null) {
       throw new AccessDeniedException("Unauthorized websocket message");
     }

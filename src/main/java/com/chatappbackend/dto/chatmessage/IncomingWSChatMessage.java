@@ -6,10 +6,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChatMessage {
+public class IncomingWSChatMessage {
   private String content;
 
   private UUID chatRoomId;
-
-  private String userId;
 }

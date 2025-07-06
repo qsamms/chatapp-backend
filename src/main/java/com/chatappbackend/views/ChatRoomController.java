@@ -1,5 +1,6 @@
 package com.chatappbackend.views;
 
+import com.chatappbackend.dto.chatroom.ChatRoomDTO;
 import com.chatappbackend.dto.rooms.CreateRoomRequest;
 import com.chatappbackend.dto.rooms.InviteRequest;
 import com.chatappbackend.dto.rooms.RoomsRequest;
@@ -9,22 +10,27 @@ import com.chatappbackend.models.User;
 import com.chatappbackend.service.ChatService;
 import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.MapUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rooms")
 public class ChatRoomController {
+
   private final ChatService chatService;
   private final UserService userService;
+
+  @PersistenceContext private EntityManager entityManager;
 
   public ChatRoomController(ChatService chatService, UserService userService) {
     this.chatService = chatService;
@@ -32,45 +38,52 @@ public class ChatRoomController {
   }
 
   @PostMapping("/")
-  public ResponseEntity<Map<String, Object>> createRoom(@Valid @RequestBody CreateRoomRequest req) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User reqUser = userService.getUser(authentication.getName());
+  @Transactional
+  public ResponseEntity<Map<String, Object>> createRoom(
+      @Valid @RequestBody CreateRoomRequest req, Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+
     ChatRoom chatRoom =
         chatService.saveChatRoom(ChatRoom.builder().createdBy(reqUser).name(req.getName()).build());
-    ChatRoomParticipant participant =
+    chatService.saveChatParticipant(
         ChatRoomParticipant.builder()
             .user(reqUser)
             .chatRoom(chatRoom)
             .joinedAt(LocalDateTime.now())
             .hasAccepted(true)
-            .build();
-    chatService.saveChatParticipant(participant);
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(MapUtil.toMap(chatService.saveChatRoom(chatRoom)));
+            .build());
+    entityManager.flush();
+    entityManager.refresh(chatRoom);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(MapUtil.toMap(new ChatRoomDTO(chatRoom)));
   }
 
   @GetMapping("/")
-  public ResponseEntity<Map<String, Object>> getRooms(@Valid @RequestBody RoomsRequest req) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User currentUser = userService.getUser(authentication.getName());
+  public ResponseEntity<Map<String, Object>> getRooms(
+      @Valid @RequestBody RoomsRequest req, Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+
     List<ChatRoom> chatRooms = List.of();
     if (req.getType().equals("invited")) {
-      chatRooms = chatService.getInvitedUserChatRooms(currentUser.getId());
+      chatRooms = chatService.getInvitedUserChatRooms(reqUser.getId());
     } else if (req.getType().equals("accepted")) {
-      chatRooms = chatService.getAcceptedUserChatRooms(currentUser.getId());
+      chatRooms = chatService.getAcceptedUserChatRooms(reqUser.getId());
     }
+
     return ResponseEntity.status(HttpStatus.OK).body(Map.of("rooms", chatRooms));
   }
 
   @GetMapping("/{roomId}/messages/")
-  public ResponseEntity<Map<String, Object>> getMessages(@PathVariable UUID roomId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User currentUser = userService.getUser(authentication.getName());
+  public ResponseEntity<Map<String, Object>> getMessages(
+      @PathVariable UUID roomId, Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+
     ChatRoom chatRoom = chatService.getChatRoom(roomId);
-    if (!chatService.isUserInChatRoom(currentUser, chatRoom)) {
+    if (!chatService.isUserInChatRoom(reqUser, chatRoom)) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .body(Map.of("message", "User is not in the requested chat room"));
     }
+
     return ResponseEntity.status(HttpStatus.OK)
         .body(Map.of("messages", chatService.getMessagesInChatRoom(roomId)));
   }
@@ -82,15 +95,15 @@ public class ChatRoomController {
     ChatRoom chatRoom = chatService.getChatRoom(roomId);
     ChatRoomParticipant newParticipant =
         ChatRoomParticipant.builder().chatRoom(chatRoom).user(targetUser).build();
+
     return ResponseEntity.status(HttpStatus.OK)
         .body(MapUtil.toMap(chatService.saveChatParticipant(newParticipant)));
   }
 
   @PostMapping("/{roomId}/accept/")
-  public ResponseEntity<Void> accept(@PathVariable UUID roomId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User currentUser = userService.getUser(authentication.getName());
-    chatService.acceptChatRoomInvitation(roomId, currentUser);
+  public ResponseEntity<Void> accept(@PathVariable UUID roomId, Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+    chatService.acceptChatRoomInvitation(roomId, reqUser);
     return ResponseEntity.ok().build();
   }
 }
