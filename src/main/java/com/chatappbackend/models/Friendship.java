@@ -25,6 +25,10 @@ public class Friendship {
   @JoinColumn(name = "user_id2", nullable = false)
   private User user2;
 
+  @ManyToOne
+  @JoinColumn(name = "sender", nullable = false)
+  private User sender;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private FriendshipStatus friendshipStatus;

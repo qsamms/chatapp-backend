@@ -4,13 +4,11 @@ import com.chatappbackend.dto.chatroom.ChatRoomDTO;
 import com.chatappbackend.dto.message.MessageDTO;
 import com.chatappbackend.dto.rooms.CreateRoomRequest;
 import com.chatappbackend.dto.rooms.InviteRequest;
-import com.chatappbackend.dto.rooms.RoomsRequest;
 import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.ChatRoomParticipant;
 import com.chatappbackend.models.User;
 import com.chatappbackend.service.ChatService;
 import com.chatappbackend.service.UserService;
-import com.chatappbackend.utils.MapUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -42,7 +40,7 @@ public class ChatRoomController {
 
   @PostMapping("/")
   @Transactional
-  public ResponseEntity<Map<String, Object>> createRoom(
+  public ResponseEntity<ChatRoomDTO> createRoom(
       @Valid @RequestBody CreateRoomRequest req, Principal principal) {
     User reqUser = userService.getUser(principal.getName());
 
@@ -59,29 +57,49 @@ public class ChatRoomController {
     entityManager.refresh(chatRoom);
 
     URI location = URI.create("/rooms/" + chatRoom.getId() + "/");
-    return ResponseEntity.created(location).body(MapUtil.toMap(new ChatRoomDTO(chatRoom)));
+    return ResponseEntity.created(location).body(new ChatRoomDTO(chatRoom));
   }
 
   @GetMapping("/")
-  public ResponseEntity<Map<String, Object>> getRooms(
-      @Valid @RequestBody RoomsRequest req, Principal principal) {
+  public ResponseEntity<Map<String, Object>> getAllRooms(Principal principal) {
     User reqUser = userService.getUser(principal.getName());
 
-    List<ChatRoomDTO> chatRooms = List.of();
-    if (req.getType().equals("invited")) {
-      chatRooms =
-          chatService.getInvitedUserChatRooms(reqUser.getId()).stream()
-              .map(ChatRoomDTO::new)
-              .collect(Collectors.toList());
-    } else if (req.getType().equals("accepted")) {
-      chatRooms =
-          chatService.getAcceptedUserChatRooms(reqUser.getId()).stream()
-              .map(ChatRoomDTO::new)
-              .collect(Collectors.toList());
-      ;
-    }
+    List<ChatRoomDTO> acceptedChatRooms =
+        chatService.getAcceptedUserChatRooms(reqUser.getId()).stream()
+            .map(ChatRoomDTO::new)
+            .collect(Collectors.toList());
 
-    return ResponseEntity.ok().body(Map.of("rooms", chatRooms));
+    List<ChatRoomDTO> invitedChatRooms =
+        chatService.getInvitedUserChatRooms(reqUser.getId()).stream()
+            .map(ChatRoomDTO::new)
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok()
+        .body(Map.of("accepted", acceptedChatRooms, "invited", invitedChatRooms));
+  }
+
+  @GetMapping("/accepted/")
+  public ResponseEntity<List<ChatRoomDTO>> getAcceptedRooms(Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+
+    List<ChatRoomDTO> chatRooms =
+        chatService.getAcceptedUserChatRooms(reqUser.getId()).stream()
+            .map(ChatRoomDTO::new)
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok().body(chatRooms);
+  }
+
+  @GetMapping("/invited/")
+  public ResponseEntity<List<ChatRoomDTO>> getInvitedRooms(Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+
+    List<ChatRoomDTO> chatRooms =
+        chatService.getInvitedUserChatRooms(reqUser.getId()).stream()
+            .map(ChatRoomDTO::new)
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok().body(chatRooms);
   }
 
   @GetMapping("/{roomId}/messages/")
@@ -105,20 +123,19 @@ public class ChatRoomController {
   }
 
   @PostMapping("/{roomId}/invite/")
-  public ResponseEntity<Map<String, Object>> invite(
+  public ResponseEntity<Void> invite(
       @PathVariable UUID roomId, @Valid @RequestBody InviteRequest req) {
     User targetUser = userService.getUser(req.getUsername());
     ChatRoom chatRoom = chatService.getChatRoom(roomId);
-    ChatRoomParticipant newParticipant =
-        ChatRoomParticipant.builder().chatRoom(chatRoom).user(targetUser).build();
-
-    return ResponseEntity.ok().build();
+    chatService.saveChatParticipant(
+        ChatRoomParticipant.builder().chatRoom(chatRoom).user(targetUser).build());
+    return ResponseEntity.noContent().build();
   }
 
   @PostMapping("/{roomId}/accept/")
   public ResponseEntity<Void> accept(@PathVariable UUID roomId, Principal principal) {
     User reqUser = userService.getUser(principal.getName());
     chatService.acceptChatRoomInvitation(roomId, reqUser);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
 }

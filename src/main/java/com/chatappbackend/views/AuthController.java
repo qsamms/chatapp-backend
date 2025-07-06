@@ -6,7 +6,6 @@ import com.chatappbackend.dto.auth.SignUpResponse;
 import com.chatappbackend.models.User;
 import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.JwtUtil;
-import com.chatappbackend.utils.MapUtil;
 import jakarta.validation.Valid;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -41,11 +40,14 @@ public class AuthController {
   }
 
   @PostMapping("/signup/")
-  public ResponseEntity<Map<String, Object>> signup(@Valid @RequestBody SignUpRequest request) {
+  public ResponseEntity<SignUpResponse> signup(@Valid @RequestBody SignUpRequest request) {
     User newUser =
         userService.createUser(request.getUsername(), request.getPassword(), request.getEmail());
-    SignUpResponse response =
-        SignUpResponse.builder().username(newUser.getUsername()).email(newUser.getEmail()).build();
-    return ResponseEntity.status(HttpStatus.CREATED).body(MapUtil.toMap(response));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(
+            SignUpResponse.builder()
+                .username(newUser.getUsername())
+                .email(newUser.getEmail())
+                .build());
   }
 }

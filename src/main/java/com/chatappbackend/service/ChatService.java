@@ -7,6 +7,7 @@ import com.chatappbackend.models.User;
 import com.chatappbackend.repository.ChatRoomParticipantRepository;
 import com.chatappbackend.repository.ChatRoomRepository;
 import com.chatappbackend.repository.MessageRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,6 +73,7 @@ public class ChatService {
     ChatRoomParticipant chatRoomParticipant =
         chatRoomParticipantRepository.findByChatRoomAndUser(chatRoom, user).orElseThrow();
     chatRoomParticipant.setHasAccepted(true);
+    chatRoomParticipant.setJoinedAt(LocalDateTime.now());
     chatRoomParticipantRepository.save(chatRoomParticipant);
   }
 

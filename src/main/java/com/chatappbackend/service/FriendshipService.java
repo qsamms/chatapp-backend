@@ -27,11 +27,12 @@ public class FriendshipService {
     User user2 = sender.getId() < receiver.getId() ? receiver : sender;
 
     if (friendshipRepository.findByUser1AndUser2(user1, user2).isPresent()) {
-      throw new IllegalStateException("Friend request already exists");
+      throw new IllegalStateException("Friendship already exists");
     }
 
     Friendship friendship =
         Friendship.builder()
+            .sender(sender)
             .user1(user1)
             .user2(user2)
             .friendshipStatus(FriendshipStatus.PENDING)
@@ -49,13 +50,22 @@ public class FriendshipService {
     friendshipRepository.deleteById(friendshipId);
   }
 
-  public List<Friendship> getFriends(String username, String status) {
+  public List<Friendship> getAcceptedFriendships(String username) {
     User user = userRepository.findByUsername(username).orElseThrow();
     List<Friendship> friendsList =
-        friendshipRepository.findByUser1AndFriendshipStatus(user, FriendshipStatus.valueOf(status));
+        friendshipRepository.findByUser1AndFriendshipStatus(user, FriendshipStatus.ACCEPTED);
     friendsList.addAll(
-        friendshipRepository.findByUser2AndFriendshipStatus(
-            user, FriendshipStatus.valueOf(status)));
+        friendshipRepository.findByUser2AndFriendshipStatus(user, FriendshipStatus.ACCEPTED));
     return friendsList;
+  }
+
+  public List<Friendship> getPendingSentFriendships(String username) {
+    User user = userRepository.findByUsername(username).orElseThrow();
+    return friendshipRepository.findBySenderAndFriendshipStatus(user, FriendshipStatus.PENDING);
+  }
+
+  public List<Friendship> getPendingReceivedFriendships(String username) {
+    User user = userRepository.findByUsername(username).orElseThrow();
+    return friendshipRepository.findFriendshipsWhereUserIsNotSender(user, FriendshipStatus.PENDING);
   }
 }
