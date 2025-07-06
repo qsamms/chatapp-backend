@@ -1,12 +1,17 @@
-FROM maven:3.9.9-eclipse-temurin-23-alpine
+FROM maven:3.9.9-eclipse-temurin-23-alpine AS builder
 
 WORKDIR /app
 
-COPY . .
+COPY pom.xml .
+COPY src ./src
 
 RUN mvn clean package -DskipTests
 
-COPY target/chatapp-backend-0.0.1-SNAPSHOT.jar chatapp-backend-0.0.1-SNAPSHOT.jar
+FROM openjdk:21-jdk
+
+WORKDIR /app
+
+COPY --from=builder /app/target/chatapp-backend-0.0.1-SNAPSHOT.jar .
 
 EXPOSE 8080
 

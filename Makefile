@@ -19,3 +19,7 @@ pre-commit-install:
 .PHONY: build
 build:
 	docker build -t chatapp-backend .
+
+.PHONY: run-docker
+run-docker:
+	. conf/set_env.sh && docker compose up backend -d
