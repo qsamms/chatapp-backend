@@ -33,6 +33,7 @@ build/
 .vscode/
 
 conf/set_env.sh
+conf/set_env_docker.sh
 
 node_modules/
 package-lock.json
