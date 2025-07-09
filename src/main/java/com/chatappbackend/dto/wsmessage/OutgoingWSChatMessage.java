@@ -18,11 +18,14 @@ public class OutgoingWSChatMessage {
 
   private LocalDateTime timestamp;
 
+  private String mediaUrl;
+
   public OutgoingWSChatMessage(Message message) {
     this.sender = message.getSender().getUsername();
     this.content = message.getContent();
     this.chatRoomId = message.getChatRoom().getId();
     this.id = message.getId();
     this.timestamp = message.getTimestamp();
+    this.mediaUrl = message.getMediaUrl();
   }
 }

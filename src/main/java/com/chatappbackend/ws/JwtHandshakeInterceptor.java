@@ -29,8 +29,16 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
       HttpServletRequest httpRequest = servletRequest.getServletRequest();
       String token = httpRequest.getHeader("Authorization");
 
-      if (token != null && token.startsWith("Bearer ")) {
-        token = token.substring(7);
+      // try and get token from query param if not in header
+      if (token == null || token.isEmpty()) {
+        token = httpRequest.getParameter("token");
+        System.out.println(token);
+      }
+
+      if (token != null) {
+        if (token.startsWith("Bearer ")) {
+          token = token.substring(7);
+        }
         String username = jwtUtil.extractUsername(token);
 
         if (jwtUtil.validateToken(token, username)) {

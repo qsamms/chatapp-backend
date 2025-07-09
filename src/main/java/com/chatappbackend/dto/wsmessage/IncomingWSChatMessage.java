@@ -5,4 +5,6 @@ import lombok.Getter;
 @Getter
 public class IncomingWSChatMessage {
   private String content;
+
+  private String mediaUrl;
 }
