@@ -18,29 +18,25 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
     this.jwtUtil = jwtUtil;
   }
 
+  public String extractToken(HttpServletRequest request) {
+    String token = request.getHeader("Authorization");
+    if (token == null || token.isEmpty()) {
+      token = request.getParameter("token");
+    }
+    return token;
+  }
+
   @Override
   public boolean beforeHandshake(
       ServerHttpRequest request,
       ServerHttpResponse response,
       WebSocketHandler wsHandler,
       Map<String, Object> attributes) {
-
     if (request instanceof ServletServerHttpRequest servletRequest) {
       HttpServletRequest httpRequest = servletRequest.getServletRequest();
-      String token = httpRequest.getHeader("Authorization");
-
-      // try and get token from query param if not in header
-      if (token == null || token.isEmpty()) {
-        token = httpRequest.getParameter("token");
-        System.out.println(token);
-      }
-
+      String token = extractToken(httpRequest);
       if (token != null) {
-        if (token.startsWith("Bearer ")) {
-          token = token.substring(7);
-        }
         String username = jwtUtil.extractUsername(token);
-
         if (jwtUtil.validateToken(token, username)) {
           attributes.put("principal", (Principal) () -> username);
           return true;
