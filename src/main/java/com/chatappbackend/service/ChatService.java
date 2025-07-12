@@ -79,9 +79,8 @@ public class ChatService {
 
   @Transactional
   public Message saveMessage(Message message, ChatRoom chatRoom) {
-    // Locking the row to avoid race condition of concurrent threads reading the next sequence
-    // number,
-    // and attempting to write the same next sequence number to db.
+    // Locking the row to avoid race condition of concurrent threads reading the sequence
+    // number and attempting to write the same next sequence number to db.
     ChatRoom lockedChatRoom = this.chatRoomRepository.lockChatRoomById(chatRoom.getId());
 
     Long maxSequenceNumber = this.messageRepository.findMaxSequenceNumberByChatRoom(chatRoom);
