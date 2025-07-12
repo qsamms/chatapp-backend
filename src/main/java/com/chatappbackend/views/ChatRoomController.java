@@ -108,7 +108,7 @@ public class ChatRoomController {
   @PostMapping("/{roomId}/messages/")
   public ResponseEntity<Map<String, Object>> getMessages(
       @PathVariable UUID roomId,
-      @RequestBody MessageReq req,
+      @RequestBody(required = false) MessageReq req,
       @RequestParam(defaultValue = "50") int limit,
       Principal principal) {
     User reqUser = userService.getUser(principal.getName());
@@ -119,8 +119,8 @@ public class ChatRoomController {
           .body(Map.of("message", "User is not in the requested chat room"));
     }
 
-    LocalDateTime before = req.getBefore();
-    LocalDateTime after = req.getAfter();
+    LocalDateTime before = req != null ? req.getBefore() : null;
+    LocalDateTime after = req != null ? req.getAfter() : null;
 
     if (before != null && after != null)
       return ResponseEntity.badRequest()
