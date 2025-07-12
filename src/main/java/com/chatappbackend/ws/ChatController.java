@@ -48,6 +48,7 @@ public class ChatController {
                     .sender(user)
                     .chatRoom(chatRoom)
                     .mediaUrl(message.getMediaUrl())
-                    .build())));
+                    .build(),
+                chatRoom)));
   }
 }

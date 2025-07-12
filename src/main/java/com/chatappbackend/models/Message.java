@@ -6,7 +6,9 @@ import java.util.UUID;
 import lombok.*;
 
 @Entity
-@Table(name = "messages")
+@Table(
+    name = "messages",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"chat_room_id", "sequence_number"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,6 +29,9 @@ public class Message {
   @ManyToOne
   @JoinColumn(nullable = false)
   private ChatRoom chatRoom;
+
+  @Column(nullable = false)
+  private Long sequenceNumber;
 
   @Column(nullable = false)
   @Builder.Default

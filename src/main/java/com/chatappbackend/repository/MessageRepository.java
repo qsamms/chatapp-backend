@@ -1,24 +1,24 @@
 package com.chatappbackend.repository;
 
+import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.Message;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface MessageRepository extends JpaRepository<Message, UUID> {
-  List<Message> findByChatRoomIdOrderByTimestampAsc(UUID chatRoomId);
+  Page<Message> findByChatRoomIdOrderByTimestampDesc(UUID chatRoomId, Pageable pageable);
 
-  List<Message> findByChatRoomIdOrderByTimestampDesc(UUID chatRoomId);
+  Page<Message> findByChatRoomIdAndTimestampBefore(
+      UUID chatRoomId, LocalDateTime before, Pageable pageable);
 
-  List<Message> findByChatRoomIdAndTimestampBetweenOrderByTimestampDesc(
-      UUID chatRoomId, LocalDateTime start, LocalDateTime end);
+  Page<Message> findByChatRoomIdAndTimestampAfter(
+      UUID chatRoomId, LocalDateTime after, Pageable pageable);
 
-  List<Message> findByChatRoomIdAndTimestampAfterOrderByTimestampDesc(
-      UUID chatRoomId, LocalDateTime timestamp);
-
-  @Query(
-      "SELECT m FROM Message m WHERE m.chatRoom.id = :chatRoomId AND m.sender.id = :userId ORDER BY m.timestamp ASC")
-  List<Message> findMessagesByChatRoomAndUser(UUID chatRoomId, Long userId);
+  @Query("SELECT MAX(m.sequenceNumber) FROM Message m WHERE m.chatRoom = :chatRoom")
+  Long findMaxSequenceNumberByChatRoom(@Param("chatRoom") ChatRoom chatRoom);
 }

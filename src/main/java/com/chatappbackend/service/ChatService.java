@@ -7,10 +7,14 @@ import com.chatappbackend.models.User;
 import com.chatappbackend.repository.ChatRoomParticipantRepository;
 import com.chatappbackend.repository.ChatRoomRepository;
 import com.chatappbackend.repository.MessageRepository;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,14 +30,6 @@ public class ChatService {
     this.chatRoomRepository = chatRoomRepository;
     this.messageRepository = messageRepository;
     this.chatRoomParticipantRepository = chatRoomParticipantRepository;
-  }
-
-  public Optional<ChatRoomParticipant> getChatRoomParticipant(ChatRoom chatRoom, User user) {
-    return chatRoomParticipantRepository.findByChatRoomAndUser(chatRoom, user);
-  }
-
-  public List<ChatRoomParticipant> getChatRoomParticipants(ChatRoom chatRoom) {
-    return chatRoomParticipantRepository.findByChatRoom(chatRoom);
   }
 
   public ChatRoomParticipant saveChatParticipant(ChatRoomParticipant chatRoomParticipant) {
@@ -56,27 +52,20 @@ public class ChatService {
     return chatRoomRepository.save(chatRoom);
   }
 
-  public List<ChatRoom> getChatRoomsCreatedByUser(User user) {
-    return chatRoomRepository.findByCreatedBy(user);
+  public Page<Message> getMessagesInChatRoom(UUID chatRoomId, int limit) {
+    Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp"));
+    return messageRepository.findByChatRoomIdOrderByTimestampDesc(chatRoomId, pageable);
   }
 
-  public List<Message> getMessagesInChatRoom(UUID chatRoomId) {
-    return messageRepository.findByChatRoomIdOrderByTimestampDesc(chatRoomId);
+  public Page<Message> getMessagesInChatRoomBefore(
+      UUID chatRoomId, LocalDateTime before, int limit) {
+    Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp"));
+    return messageRepository.findByChatRoomIdAndTimestampBefore(chatRoomId, before, pageable);
   }
 
-  public List<Message> getMessagesInChatRoom(
-      UUID chatRoomId, LocalDateTime start, LocalDateTime end) {
-    return messageRepository.findByChatRoomIdAndTimestampBetweenOrderByTimestampDesc(
-        chatRoomId, start, end);
-  }
-
-  public List<Message> getMessagesInChatRoom(UUID chatRoomId, LocalDateTime start) {
-    return messageRepository.findByChatRoomIdAndTimestampAfterOrderByTimestampDesc(
-        chatRoomId, start);
-  }
-
-  public List<Message> getUserMessagesInChatRoom(UUID chatRoomId, Long userId) {
-    return messageRepository.findMessagesByChatRoomAndUser(chatRoomId, userId);
+  public Page<Message> getMessagesInChatRoomAfter(UUID chatRoomId, LocalDateTime after, int limit) {
+    Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.ASC, "timestamp"));
+    return messageRepository.findByChatRoomIdAndTimestampAfter(chatRoomId, after, pageable);
   }
 
   public void acceptChatRoomInvitation(UUID chatRoomId, User user) {
@@ -88,7 +77,15 @@ public class ChatService {
     chatRoomParticipantRepository.save(chatRoomParticipant);
   }
 
-  public Message saveMessage(Message message) {
+  @Transactional
+  public Message saveMessage(Message message, ChatRoom chatRoom) {
+    // Locking the row to avoid race condition of concurrent threads reading the next sequence
+    // number,
+    // and attempting to write the same next sequence number to db.
+    ChatRoom lockedChatRoom = this.chatRoomRepository.lockChatRoomById(chatRoom.getId());
+
+    Long maxSequenceNumber = this.messageRepository.findMaxSequenceNumberByChatRoom(chatRoom);
+    message.setSequenceNumber((maxSequenceNumber == null) ? 0 : maxSequenceNumber + 1);
     return messageRepository.save(message);
   }
 

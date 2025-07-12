@@ -1,12 +1,13 @@
 package com.chatappbackend.views;
 
 import com.chatappbackend.dto.chatroom.ChatRoomDTO;
-import com.chatappbackend.dto.message.MessageBetween;
 import com.chatappbackend.dto.message.MessageDTO;
+import com.chatappbackend.dto.message.MessageReq;
 import com.chatappbackend.dto.rooms.CreateRoomRequest;
 import com.chatappbackend.dto.rooms.InviteRequest;
 import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.ChatRoomParticipant;
+import com.chatappbackend.models.Message;
 import com.chatappbackend.models.User;
 import com.chatappbackend.service.ChatService;
 import com.chatappbackend.service.UserService;
@@ -17,9 +18,11 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -102,59 +105,43 @@ public class ChatRoomController {
     return ResponseEntity.ok().body(chatRooms);
   }
 
-  @GetMapping("/{roomId}/messages/")
-  public ResponseEntity<?> getMessages(@PathVariable UUID roomId, Principal principal) {
-    User reqUser = userService.getUser(principal.getName());
-
-    ChatRoom chatRoom = chatService.getChatRoom(roomId);
-    if (!chatService.isUserInChatRoom(reqUser, chatRoom)) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(Map.of("message", "User is not in the requested chat room"));
-    }
-
-    return ResponseEntity.ok()
-        .body(chatService.getMessagesInChatRoom(roomId).stream().map(MessageDTO::new).toList());
-  }
-
   @PostMapping("/{roomId}/messages/")
-  public ResponseEntity<?> getMessagesBetween(
-      @PathVariable UUID roomId, @RequestBody MessageBetween req, Principal principal) {
+  public ResponseEntity<Map<String, Object>> getMessages(
+      @PathVariable UUID roomId,
+      @RequestBody MessageReq req,
+      @RequestParam(defaultValue = "50") int limit,
+      Principal principal) {
     User reqUser = userService.getUser(principal.getName());
-
     ChatRoom chatRoom = chatService.getChatRoom(roomId);
+
     if (!chatService.isUserInChatRoom(reqUser, chatRoom)) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .body(Map.of("message", "User is not in the requested chat room"));
     }
 
-    LocalDateTime start = req.getStart();
-    LocalDateTime end = req.getEnd();
+    LocalDateTime before = req.getBefore();
+    LocalDateTime after = req.getAfter();
 
-    if (start != null && end != null && end.isBefore(start))
+    if (before != null && after != null)
       return ResponseEntity.badRequest()
-          .body(Map.of("message", "Start time must be before end time"));
+          .body(Map.of("message", "Before and after cannot be given together"));
 
-    System.out.println(start);
-    System.out.println(end);
-    List<MessageDTO> messages;
-    if (start != null && end != null) {
-      messages =
-          chatService.getMessagesInChatRoom(chatRoom.getId(), start, end).stream()
-              .map(MessageDTO::new)
-              .toList();
-    } else if (start != null) {
-      messages =
-          chatService.getMessagesInChatRoom(chatRoom.getId(), start).stream()
-              .map(MessageDTO::new)
-              .toList();
+    Page<Message> page;
+    if (before != null) {
+      page = chatService.getMessagesInChatRoomBefore(chatRoom.getId(), before, limit);
+    } else if (after != null) {
+      page = chatService.getMessagesInChatRoomAfter(chatRoom.getId(), after, limit);
     } else {
-      messages =
-          chatService.getMessagesInChatRoom(chatRoom.getId()).stream()
-              .map(MessageDTO::new)
-              .toList();
+      page = chatService.getMessagesInChatRoom(chatRoom.getId(), limit);
     }
 
-    return ResponseEntity.ok().body(messages);
+    Map<String, Object> response = new HashMap<>();
+    List<MessageDTO> messages = page.getContent().stream().map(MessageDTO::new).toList();
+    response.put("messages", messages);
+    response.put("hasMore", page.hasNext());
+    response.put("nextCursor", messages.isEmpty() ? null : messages.getLast().getTimestamp());
+
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/{roomId}/invite/")

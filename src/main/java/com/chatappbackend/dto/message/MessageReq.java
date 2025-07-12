@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
-public class MessageBetween {
-  private LocalDateTime start;
+public class MessageReq {
+  private LocalDateTime after;
 
-  private LocalDateTime end;
+  private LocalDateTime before;
 }
