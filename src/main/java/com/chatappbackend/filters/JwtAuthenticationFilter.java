@@ -3,6 +3,7 @@ package com.chatappbackend.filters;
 import com.chatappbackend.models.User;
 import com.chatappbackend.service.CustomUserDetailsService;
 import com.chatappbackend.utils.JwtUtil;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -27,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-      throws ServletException, IOException {
+      throws ServletException, IOException, ResponseStatusException {
 
     String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -36,7 +38,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     String token = authHeader.substring(7);
-    String username = jwtUtil.extractUsername(token);
+    String username;
+    try {
+      username = jwtUtil.extractUsername(token);
+    } catch (MalformedJwtException e) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.setContentType("application/json");
+      String json = "{\"error\": \"Invalid JWT token\"}";
+      response.getWriter().write(json);
+      response.getWriter().flush();
+      return;
+    }
 
     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
       User user = userDetailsService.loadUserByUsername(username);

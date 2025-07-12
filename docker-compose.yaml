@@ -3,8 +3,7 @@ services:
     restart: unless-stopped
     image: chatapp-backend
     container_name: backend
-    ports:
-      - "8080:8080"
+    network_mode: host
     environment:
       - PG_PORT=${PG_PORT}
       - PG_HOST=${PG_HOST}

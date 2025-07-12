@@ -18,7 +18,7 @@ if ! docker volume ls | grep -q pg_data; then
   docker volume create pg_data
 fi
 
-docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=${DB_PASSWORD} -v pg_data:/var/lib/postgresql/data postgres:latest
+docker run -d --network host --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=${DB_PASSWORD} -v pg_data:/var/lib/postgresql/data postgres:latest
 
 echo "Waiting for postgres to come up..."
 count=0

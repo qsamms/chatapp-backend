@@ -24,4 +24,4 @@ build:
 run-docker:
 	docker stop backend || true
 	docker rm backend || true
-	. conf/set_env_docker.sh && docker compose up backend -d
+	. conf/set_env_docker.sh && docker-compose up -d backend

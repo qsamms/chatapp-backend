@@ -24,7 +24,7 @@ public class JwtUtil {
         .compact();
   }
 
-  public String extractUsername(String token) {
+  public String extractUsername(String token) throws MalformedJwtException {
     return Jwts.parserBuilder()
         .setSigningKey(getSigningKey())
         .build()
