@@ -33,7 +33,7 @@ public class JwtUtil {
         .getSubject();
   }
 
-  public boolean validateToken(String token, String username) {
+  public boolean validateToken(String token, String username) throws ExpiredJwtException {
     return (username.equals(extractUsername(token)) && !isTokenExpired(token));
   }
 

@@ -3,6 +3,7 @@ package com.chatappbackend.filters;
 import com.chatappbackend.models.User;
 import com.chatappbackend.service.CustomUserDetailsService;
 import com.chatappbackend.utils.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,11 +38,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return;
     }
 
-    String token = authHeader.substring(7);
-    String username;
     try {
-      username = jwtUtil.extractUsername(token);
-    } catch (MalformedJwtException e) {
+      String token = authHeader.substring(7);
+      String username = jwtUtil.extractUsername(token);
+
+      if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        User user = userDetailsService.loadUserByUsername(username);
+        if (jwtUtil.validateToken(token, username)) {
+          UsernamePasswordAuthenticationToken authToken =
+              new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+          authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+          SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
+      }
+    } catch (MalformedJwtException | ExpiredJwtException e) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       response.setContentType("application/json");
       String json = "{\"error\": \"Invalid JWT token\"}";
@@ -50,15 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return;
     }
 
-    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-      User user = userDetailsService.loadUserByUsername(username);
-      if (jwtUtil.validateToken(token, username)) {
-        UsernamePasswordAuthenticationToken authToken =
-            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-      }
-    }
     chain.doFilter(request, response);
   }
 }
