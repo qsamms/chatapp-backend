@@ -1,5 +1,6 @@
 package com.chatappbackend.dto.chatroom;
 
+import com.chatappbackend.dto.user.UserDTO;
 import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.ChatRoomParticipant;
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class ChatRoomDTO {
 
   private LocalDateTime createdAt;
 
-  private List<String> participants;
+  private List<UserDTO> participants;
 
   public ChatRoomDTO(ChatRoom chatRoom) {
     this.id = chatRoom.getId();
@@ -27,7 +28,7 @@ public class ChatRoomDTO {
     this.participants =
         chatRoom.getParticipants().stream()
             .filter(ChatRoomParticipant::getHasAccepted)
-            .map(participant -> participant.getUser().getUsername())
+            .map(participant -> new UserDTO(participant.getUser()))
             .toList();
   }
 }

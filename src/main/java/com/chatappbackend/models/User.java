@@ -29,6 +29,11 @@ public class User implements UserDetails {
   @Column(nullable = false, unique = true)
   private String email;
 
+  @Column private String displayName;
+
+  @Column(columnDefinition = "TEXT")
+  private String bio;
+
   @Enumerated(EnumType.STRING)
   private Role role;
 
