@@ -20,8 +20,15 @@ pre-commit-install:
 build:
 	docker build -t chatapp-backend .
 
+.PHONY: build-postgres
+build-postgres:
+	. conf/set_env_docker.sh && docker build -f conf/postgres/Dockerfile \
+	--build-arg PG_USER=$(DB_USER) \
+	--build-arg PG_PASSWORD=$(DB_PASSWORD) \
+	--build-arg PG_DB=$(DB_NAME) \-t chatapp-postgres .
+
 .PHONY: run-docker
 run-docker:
-	docker stop backend || true
-	docker rm backend || true
-	. conf/set_env_docker.sh && docker-compose up -d backend
+	docker stop backend postgres || true
+	docker rm backend postgres || true
+	. conf/set_env_docker.sh && docker-compose up -d
