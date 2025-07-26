@@ -178,6 +178,6 @@ public class ChatRoomController {
 
     ChatRoomParticipant newParticipant = ChatRoomParticipant.builder().chatRoom(invite.getChatRoom()).user(reqUser).joinedAt(LocalDateTime.now()).hasAccepted(true).build();
     chatService.saveChatParticipant(newParticipant);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok().body(Map.of("roomId", invite.getChatRoom().getId()));
   }
 }
