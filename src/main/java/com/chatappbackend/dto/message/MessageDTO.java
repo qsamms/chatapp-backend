@@ -19,11 +19,14 @@ public class MessageDTO {
 
   private LocalDateTime timestamp;
 
+  private String mediaUrl;
+
   public MessageDTO(Message message) {
     this.id = message.getId();
     this.content = message.getContent();
     this.sender = message.getSender().getUsername();
     this.chatRoomId = message.getChatRoom().getId();
     this.timestamp = message.getTimestamp();
+    this.mediaUrl = message.getMediaUrl();
   }
 }

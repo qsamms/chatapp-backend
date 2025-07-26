@@ -99,6 +99,7 @@ public class ChatService {
 
   public ChatRoomInviteLink generateChatRoomInviteLink(ChatRoom chatRoom) {
     LocalDateTime expiration = LocalDateTime.now().plusMinutes(5);
-    return chatRoomInviteLinkRepository.save(ChatRoomInviteLink.builder().expiration(expiration).chatRoom(chatRoom).build());
+    return chatRoomInviteLinkRepository.save(
+        ChatRoomInviteLink.builder().expiration(expiration).chatRoom(chatRoom).build());
   }
 }

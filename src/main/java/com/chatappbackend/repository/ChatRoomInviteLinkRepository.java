@@ -1,9 +1,7 @@
 package com.chatappbackend.repository;
 
 import com.chatappbackend.models.ChatRoomInviteLink;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.UUID;
-
-public interface ChatRoomInviteLinkRepository extends JpaRepository<ChatRoomInviteLink, UUID> {
-}
+public interface ChatRoomInviteLinkRepository extends JpaRepository<ChatRoomInviteLink, UUID> {}

@@ -1,9 +1,9 @@
 package com.chatappbackend.models;
-import jakarta.persistence.*;
-import lombok.*;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.*;
 
 @Entity
 @Getter
@@ -12,14 +12,14 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class ChatRoomInviteLink {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private ChatRoom chatRoom;
+  @ManyToOne
+  @JoinColumn(nullable = false)
+  private ChatRoom chatRoom;
 
-    @Column(nullable = false)
-    private LocalDateTime expiration;
+  @Column(nullable = false)
+  private LocalDateTime expiration;
 }

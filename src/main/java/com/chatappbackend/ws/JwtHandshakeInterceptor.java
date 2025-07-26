@@ -2,10 +2,8 @@ package com.chatappbackend.ws;
 
 import com.chatappbackend.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.util.Collections;
 import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -43,7 +41,8 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
       if (token != null) {
         String username = jwtUtil.extractUsername(token);
         if (jwtUtil.validateToken(token, username)) {
-          Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+          Authentication authentication =
+              new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
           attributes.put("principal", authentication);
           return true;
         }
