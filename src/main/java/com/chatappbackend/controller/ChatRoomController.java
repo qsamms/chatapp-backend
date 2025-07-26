@@ -1,14 +1,12 @@
-package com.chatappbackend.views;
+package com.chatappbackend.controller;
 
 import com.chatappbackend.dto.chatroom.ChatRoomDTO;
+import com.chatappbackend.dto.chatroominvite.ChatRoomInviteLinkDTO;
 import com.chatappbackend.dto.message.MessageDTO;
 import com.chatappbackend.dto.message.MessageReq;
 import com.chatappbackend.dto.rooms.CreateRoomRequest;
 import com.chatappbackend.dto.rooms.InviteRequest;
-import com.chatappbackend.models.ChatRoom;
-import com.chatappbackend.models.ChatRoomParticipant;
-import com.chatappbackend.models.Message;
-import com.chatappbackend.models.User;
+import com.chatappbackend.models.*;
 import com.chatappbackend.service.ChatService;
 import com.chatappbackend.service.UserService;
 import jakarta.persistence.EntityManager;
@@ -22,9 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -159,5 +160,24 @@ public class ChatRoomController {
     User reqUser = userService.getUser(principal.getName());
     chatService.acceptChatRoomInvitation(roomId, reqUser);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{roomId}/invite-link/")
+  public ResponseEntity<ChatRoomInviteLinkDTO> getInviteLink(@PathVariable UUID roomId, Principal principal) {
+    return ResponseEntity.ok().body(new ChatRoomInviteLinkDTO(chatService.generateChatRoomInviteLink(chatService.getChatRoom(roomId))));
+  }
+
+  @PostMapping("/join/{inviteId}/")
+  public ResponseEntity<?> joinRoom(@PathVariable UUID inviteId, Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+
+    ChatRoomInviteLink invite = chatService.getChatRoomInviteLink(inviteId);
+    if (invite == null || LocalDateTime.now().isAfter(invite.getExpiration()) || chatService.isUserInChatRoom(reqUser, invite.getChatRoom())) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    ChatRoomParticipant newParticipant = ChatRoomParticipant.builder().chatRoom(invite.getChatRoom()).user(reqUser).joinedAt(LocalDateTime.now()).hasAccepted(true).build();
+    chatService.saveChatParticipant(newParticipant);
+    return ResponseEntity.ok().build();
   }
 }

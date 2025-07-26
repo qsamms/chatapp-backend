@@ -1,4 +1,4 @@
-package com.chatappbackend.views;
+package com.chatappbackend.controller;
 
 import com.chatappbackend.dto.user.UserDTO;
 import com.chatappbackend.service.UserService;

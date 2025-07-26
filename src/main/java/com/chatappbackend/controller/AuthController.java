@@ -1,4 +1,4 @@
-package com.chatappbackend.views;
+package com.chatappbackend.controller;
 
 import com.chatappbackend.dto.auth.AuthRequest;
 import com.chatappbackend.dto.auth.SignUpRequest;

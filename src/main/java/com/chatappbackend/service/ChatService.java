@@ -1,9 +1,7 @@
 package com.chatappbackend.service;
 
-import com.chatappbackend.models.ChatRoom;
-import com.chatappbackend.models.ChatRoomParticipant;
-import com.chatappbackend.models.Message;
-import com.chatappbackend.models.User;
+import com.chatappbackend.models.*;
+import com.chatappbackend.repository.ChatRoomInviteLinkRepository;
 import com.chatappbackend.repository.ChatRoomParticipantRepository;
 import com.chatappbackend.repository.ChatRoomRepository;
 import com.chatappbackend.repository.MessageRepository;
@@ -22,14 +20,17 @@ public class ChatService {
   private final ChatRoomParticipantRepository chatRoomParticipantRepository;
   private final ChatRoomRepository chatRoomRepository;
   private final MessageRepository messageRepository;
+  private final ChatRoomInviteLinkRepository chatRoomInviteLinkRepository;
 
   public ChatService(
       ChatRoomRepository chatRoomRepository,
       ChatRoomParticipantRepository chatRoomParticipantRepository,
-      MessageRepository messageRepository) {
+      MessageRepository messageRepository,
+      ChatRoomInviteLinkRepository chatRoomInviteLinkRepository) {
     this.chatRoomRepository = chatRoomRepository;
     this.messageRepository = messageRepository;
     this.chatRoomParticipantRepository = chatRoomParticipantRepository;
+    this.chatRoomInviteLinkRepository = chatRoomInviteLinkRepository;
   }
 
   public ChatRoomParticipant saveChatParticipant(ChatRoomParticipant chatRoomParticipant) {
@@ -90,5 +91,14 @@ public class ChatService {
 
   public boolean isUserInChatRoom(User user, ChatRoom chatRoom) {
     return chatRoomParticipantRepository.existsByChatRoomAndUser(chatRoom, user);
+  }
+
+  public ChatRoomInviteLink getChatRoomInviteLink(UUID id) {
+    return chatRoomInviteLinkRepository.getReferenceById(id);
+  }
+
+  public ChatRoomInviteLink generateChatRoomInviteLink(ChatRoom chatRoom) {
+    LocalDateTime expiration = LocalDateTime.now().plusMinutes(5);
+    return chatRoomInviteLinkRepository.save(ChatRoomInviteLink.builder().expiration(expiration).chatRoom(chatRoom).build());
   }
 }
