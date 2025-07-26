@@ -18,6 +18,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
     depends_on:
       - postgres
 
