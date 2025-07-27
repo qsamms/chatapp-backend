@@ -21,6 +21,8 @@ public class MessageDTO {
 
   private String mediaUrl;
 
+  private Long sequenceNumber;
+
   public MessageDTO(Message message) {
     this.id = message.getId();
     this.content = message.getContent();
@@ -28,5 +30,6 @@ public class MessageDTO {
     this.chatRoomId = message.getChatRoom().getId();
     this.timestamp = message.getTimestamp();
     this.mediaUrl = message.getMediaUrl();
+    this.sequenceNumber = message.getSequenceNumber();
   }
 }

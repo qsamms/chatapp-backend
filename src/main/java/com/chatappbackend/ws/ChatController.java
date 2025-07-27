@@ -1,7 +1,7 @@
 package com.chatappbackend.ws;
 
+import com.chatappbackend.dto.message.MessageDTO;
 import com.chatappbackend.dto.wsmessage.IncomingWSChatMessage;
-import com.chatappbackend.dto.wsmessage.OutgoingWSChatMessage;
 import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.Message;
 import com.chatappbackend.models.User;
@@ -41,7 +41,7 @@ public class ChatController {
 
     messagingTemplate.convertAndSend(
         "/topic/chatroom/" + roomId + "/",
-        new OutgoingWSChatMessage(
+        new MessageDTO(
             chatService.saveMessage(
                 Message.builder()
                     .content(message.getContent())
