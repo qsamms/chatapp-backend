@@ -1,7 +1,7 @@
 package com.chatappbackend.dto.wsmessage;
 
 import com.chatappbackend.models.Message;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.*;
 
@@ -16,7 +16,7 @@ public class OutgoingWSChatMessage {
 
   private UUID id;
 
-  private LocalDateTime timestamp;
+  private Instant timestamp;
 
   private String mediaUrl;
 

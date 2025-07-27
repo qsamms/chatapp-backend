@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -117,8 +118,8 @@ public class ChatRoomController {
           .body(Map.of("message", "User is not in the requested chat room"));
     }
 
-    LocalDateTime before = req != null ? req.getBefore() : null;
-    LocalDateTime after = req != null ? req.getAfter() : null;
+    Instant before = req != null ? req.getBefore() : null;
+    Instant after = req != null ? req.getAfter() : null;
 
     if (before != null && after != null)
       return ResponseEntity.badRequest()

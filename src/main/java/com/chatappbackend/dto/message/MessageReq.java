@@ -1,11 +1,11 @@
 package com.chatappbackend.dto.message;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import lombok.Getter;
 
 @Getter
 public class MessageReq {
-  private LocalDateTime after;
+  private Instant after;
 
-  private LocalDateTime before;
+  private Instant before;
 }
