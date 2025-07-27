@@ -1,7 +1,7 @@
 package com.chatappbackend.dto.message;
 
 import com.chatappbackend.models.Message;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ public class MessageDTO {
 
   private UUID chatRoomId;
 
-  private LocalDateTime timestamp;
+  private Instant timestamp;
 
   private String mediaUrl;
 

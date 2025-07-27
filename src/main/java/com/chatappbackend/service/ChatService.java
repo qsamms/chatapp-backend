@@ -6,6 +6,7 @@ import com.chatappbackend.repository.ChatRoomParticipantRepository;
 import com.chatappbackend.repository.ChatRoomRepository;
 import com.chatappbackend.repository.MessageRepository;
 import jakarta.transaction.Transactional;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -58,13 +59,12 @@ public class ChatService {
     return messageRepository.findByChatRoomIdOrderByTimestampDesc(chatRoomId, pageable);
   }
 
-  public Page<Message> getMessagesInChatRoomBefore(
-      UUID chatRoomId, LocalDateTime before, int limit) {
+  public Page<Message> getMessagesInChatRoomBefore(UUID chatRoomId, Instant before, int limit) {
     Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "timestamp"));
     return messageRepository.findByChatRoomIdAndTimestampBefore(chatRoomId, before, pageable);
   }
 
-  public Page<Message> getMessagesInChatRoomAfter(UUID chatRoomId, LocalDateTime after, int limit) {
+  public Page<Message> getMessagesInChatRoomAfter(UUID chatRoomId, Instant after, int limit) {
     Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.ASC, "timestamp"));
     return messageRepository.findByChatRoomIdAndTimestampAfter(chatRoomId, after, pageable);
   }

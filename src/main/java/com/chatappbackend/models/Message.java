@@ -1,7 +1,7 @@
 package com.chatappbackend.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.*;
 
@@ -35,7 +35,7 @@ public class Message {
 
   @Column(nullable = false)
   @Builder.Default
-  private LocalDateTime timestamp = LocalDateTime.now();
+  private Instant timestamp = Instant.now();
 
   @Column(nullable = true)
   private String mediaUrl;
