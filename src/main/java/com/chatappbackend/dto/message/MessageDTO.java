@@ -1,5 +1,6 @@
 package com.chatappbackend.dto.message;
 
+import com.chatappbackend.dto.user.UserDTO;
 import com.chatappbackend.models.Message;
 import java.time.Instant;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public class MessageDTO {
 
   private String content;
 
-  private String sender;
+  private UserDTO sender;
 
   private UUID chatRoomId;
 
@@ -26,7 +27,7 @@ public class MessageDTO {
   public MessageDTO(Message message) {
     this.id = message.getId();
     this.content = message.getContent();
-    this.sender = message.getSender().getUsername();
+    this.sender = new UserDTO(message.getSender());
     this.chatRoomId = message.getChatRoom().getId();
     this.timestamp = message.getTimestamp();
     this.mediaUrl = message.getMediaUrl();

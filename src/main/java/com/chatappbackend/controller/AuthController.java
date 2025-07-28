@@ -42,7 +42,7 @@ public class AuthController {
   @PostMapping("/signup/")
   public ResponseEntity<SignUpResponse> signup(@Valid @RequestBody SignUpRequest request) {
     User newUser =
-        userService.createUser(request.getUsername(), request.getPassword(), request.getEmail());
+        userService.createUser(request.getEmail(), request.getPassword(), request.getFirstName(), request.getLastName());
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(
             SignUpResponse.builder()

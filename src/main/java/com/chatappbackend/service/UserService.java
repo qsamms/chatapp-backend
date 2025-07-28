@@ -21,10 +21,12 @@ public class UserService {
     this.userDetailsService = userDetailsService;
   }
 
-  public User createUser(String username, String rawPassword, String email) {
+  public User createUser(String email, String rawPassword, String firstName, String lastName) {
     User user =
         User.builder()
-            .username(username)
+            .username(email)
+                .firstName(firstName)
+                .lastName(lastName)
             .password(passwordEncoder.encode(rawPassword))
             .email(email)
             .role(Role.USER)
@@ -34,6 +36,10 @@ public class UserService {
 
   public User getUser(String username) {
     return userDetailsService.loadUserByUsername(username);
+  }
+
+  public User getUserByEmail(String email) {
+    return userDetailsService.loadUserByEmail(email);
   }
 
   public User saveUser(User user) {

@@ -1,10 +1,13 @@
-version: "3.8"
 services:
   postgres:
-    image: chatapp-postgres:latest
+    image: postgres:latest
     container_name: postgres
     volumes:
       - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
 
@@ -20,8 +23,13 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     ports:
       - "8080:8080"
+    volumes:
+      - videos:/app/videos
+      - uploads:/app/uploads
     depends_on:
       - postgres
 
 volumes:
   pg_data:
+  videos:
+  uploads:
