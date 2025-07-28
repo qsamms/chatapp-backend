@@ -2,6 +2,7 @@ package com.chatappbackend.controller;
 
 import com.chatappbackend.dto.chatroom.ChatRoomDTO;
 import com.chatappbackend.dto.chatroominvite.ChatRoomInviteLinkDTO;
+import com.chatappbackend.dto.chatroomparticipant.ChatRoomParticipantDTO;
 import com.chatappbackend.dto.message.MessageDTO;
 import com.chatappbackend.dto.message.MessageReq;
 import com.chatappbackend.dto.rooms.CreateRoomRequest;
@@ -153,7 +154,8 @@ public class ChatRoomController {
               .body(Map.of("message", "User is not in the requested chat room"));
     }
 
-    return ResponseEntity.ok().body(chatService.getUsersInChatRoom(chatRoom.getId(), true));
+    List<ChatRoomParticipant> participants = chatService.getUsersInChatRoom(chatRoom.getId(), true);
+    return ResponseEntity.ok().body(participants.stream().map(ChatRoomParticipantDTO::new).toList());
   }
 
   @PostMapping("/{roomId}/invite/")
