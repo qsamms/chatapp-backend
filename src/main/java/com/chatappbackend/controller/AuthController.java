@@ -7,11 +7,12 @@ import com.chatappbackend.models.User;
 import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.JwtUtil;
 import jakarta.validation.Valid;
+
+import java.security.Principal;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,12 +32,16 @@ public class AuthController {
 
   @PostMapping("/login/")
   public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody AuthRequest request) {
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-
     UserDetails userDetails = userService.getUser(request.getUsername());
-    String token = jwtUtil.generateToken(userDetails.getUsername());
-    return ResponseEntity.ok(Map.of("token", token));
+    String accessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
+    String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
+    return ResponseEntity.ok(Map.of("accessToken", accessToken, "refreshToken", refreshToken));
+  }
+
+  @PostMapping("/refresh/")
+  public ResponseEntity<?> refresh(Principal principal) {
+    String accessToken = jwtUtil.generateAccessToken(principal.getName());
+    return ResponseEntity.ok(Map.of("accessToken", accessToken));
   }
 
   @PostMapping("/signup/")
