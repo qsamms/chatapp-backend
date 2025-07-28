@@ -28,6 +28,7 @@ public class UserController {
     User reqUser = userService.getUser(principal.getName());
     reqUser.setBio(req.getBio());
     reqUser.setDisplayName(req.getDisplayName());
+    reqUser.setDisplayActiveStatus(req.isDisplayActiveStatus());
     return ResponseEntity.ok().body(new UserDTO(userService.saveUser(reqUser)));
   }
 }

@@ -3,6 +3,8 @@ package com.chatappbackend.dto.user;
 import com.chatappbackend.models.User;
 import lombok.Getter;
 
+import java.time.Instant;
+
 @Getter
 public class UserDTO {
   private Long id;
@@ -21,6 +23,10 @@ public class UserDTO {
 
   private String lastName;
 
+  private Instant lastHeartbeat;
+
+  private boolean displayActiveStatus;
+
   public UserDTO(User user) {
     this.id = user.getId();
     this.username = user.getUsername();
@@ -30,5 +36,7 @@ public class UserDTO {
     this.displayName = user.getDisplayName();
     this.firstName = user.getFirstName();
     this.lastName = user.getLastName();
+    this.lastHeartbeat = user.getLastHeartbeat();
+    this.displayActiveStatus = user.isDisplayActiveStatus();
   }
 }

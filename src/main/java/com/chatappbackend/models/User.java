@@ -2,6 +2,8 @@ package com.chatappbackend.models;
 
 import com.chatappbackend.dto.user.Role;
 import jakarta.persistence.*;
+
+import java.time.Instant;
 import java.util.Set;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -46,6 +48,13 @@ public class User implements UserDetails {
   @Column(nullable = false)
   @Builder.Default
   private boolean enabled = true;
+
+  @Column
+  private Instant lastHeartbeat;
+
+  @Column(nullable = false, columnDefinition = "boolean default true")
+  @Builder.Default
+  private boolean displayActiveStatus = true;
 
   @Override
   public boolean isEnabled() {
