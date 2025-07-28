@@ -69,6 +69,10 @@ public class ChatService {
     return messageRepository.findByChatRoomIdAndTimestampAfter(chatRoomId, after, pageable);
   }
 
+  public List<ChatRoomParticipant> getUsersInChatRoom(UUID chatRoomId, boolean hasAccepted) {
+    return chatRoomParticipantRepository.findByChatRoomIdAndHasAccepted(chatRoomId, hasAccepted);
+  }
+
   public void acceptChatRoomInvitation(UUID chatRoomId, User user) {
     ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow();
     ChatRoomParticipant chatRoomParticipant =

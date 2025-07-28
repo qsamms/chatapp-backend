@@ -14,5 +14,7 @@ public interface ChatRoomParticipantRepository extends JpaRepository<ChatRoomPar
 
   List<ChatRoomParticipant> findByChatRoom(ChatRoom chatRoom);
 
+  List<ChatRoomParticipant> findByChatRoomIdAndHasAccepted(UUID chatRoomId, boolean hasAccepted);
+
   boolean existsByChatRoomAndUser(ChatRoom chatRoom, User user);
 }

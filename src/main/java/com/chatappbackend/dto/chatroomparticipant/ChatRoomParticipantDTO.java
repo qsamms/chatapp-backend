@@ -1,5 +1,6 @@
 package com.chatappbackend.dto.chatroomparticipant;
 
+import com.chatappbackend.dto.user.UserDTO;
 import com.chatappbackend.models.ChatRoomParticipant;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -9,9 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChatRoomParticipantDTO {
-  private UUID id;
-
-  private String username;
+  private UserDTO user;
 
   private UUID chatRoomId;
 
@@ -20,8 +19,7 @@ public class ChatRoomParticipantDTO {
   private boolean hasAccepted;
 
   public ChatRoomParticipantDTO(ChatRoomParticipant chatRoomParticipant) {
-    this.id = chatRoomParticipant.getId();
-    this.username = chatRoomParticipant.getUser().getUsername();
+    this.user = new UserDTO(chatRoomParticipant.getUser());
     this.chatRoomId = chatRoomParticipant.getChatRoom().getId();
     this.joinedAt = chatRoomParticipant.getJoinedAt();
     this.hasAccepted = chatRoomParticipant.getHasAccepted();
