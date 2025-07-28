@@ -144,7 +144,7 @@ public class ChatRoomController {
   }
 
   @GetMapping("/{roomId}/participants/")
-  public ResponseEntity<?> getMessages(@PathVariable UUID roomId, Principal principal) {
+  public ResponseEntity<?> getParticipants(@PathVariable UUID roomId, Principal principal) {
     User reqUser = userService.getUser(principal.getName());
     ChatRoom chatRoom = chatService.getChatRoom(roomId);
 
