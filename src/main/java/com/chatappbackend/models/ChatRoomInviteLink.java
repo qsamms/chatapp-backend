@@ -1,7 +1,7 @@
 package com.chatappbackend.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.*;
 
@@ -21,5 +21,5 @@ public class ChatRoomInviteLink {
   private ChatRoom chatRoom;
 
   @Column(nullable = false)
-  private LocalDateTime expiration;
+  private Instant expiration;
 }

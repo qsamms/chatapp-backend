@@ -38,17 +38,33 @@ public class ChatController {
 
     User user = userService.getUser(principal.getName());
     ChatRoom chatRoom = chatService.getChatRoom(roomId);
+    MessageDTO msg = new MessageDTO(chatService.saveMessage(Message.builder()
+            .content(message.getContent())
+            .sender(user)
+            .chatRoom(chatRoom)
+            .mediaUrl(message.getMediaUrl())
+            .build(), chatRoom));
 
-    messagingTemplate.convertAndSend(
-        "/topic/chatroom/" + roomId + "/",
-        new MessageDTO(
-            chatService.saveMessage(
-                Message.builder()
-                    .content(message.getContent())
-                    .sender(user)
-                    .chatRoom(chatRoom)
-                    .mediaUrl(message.getMediaUrl())
-                    .build(),
-                chatRoom)));
+    messagingTemplate.convertAndSend("/topic/chatroom/" + roomId + "/", msg);
+  }
+
+  @MessageMapping("/dm/{targetUser}/send/")
+  public void sendDmMessage(@DestinationVariable String targetUser, IncomingWSChatMessage message, Principal principal) throws AccessDeniedException {
+    if (principal == null) {
+      throw new AccessDeniedException("Unauthorized websocket message");
+    }
+
+    User sendUser = userService.getUser(principal.getName());
+    User target = userService.getUser(targetUser);
+    ChatRoom chatRoom = chatService.getOrCreateDm(sendUser, target);
+
+    MessageDTO msg = new MessageDTO(chatService.saveMessage(Message.builder()
+            .content(message.getContent())
+            .sender(sendUser)
+            .chatRoom(chatRoom)
+            .mediaUrl(message.getMediaUrl())
+            .build(), chatRoom));
+
+    messagingTemplate.convertAndSend("/topic/chatroom/" + chatRoom.getId() + "/", msg);
   }
 }

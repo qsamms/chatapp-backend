@@ -2,7 +2,7 @@ package com.chatappbackend.dto.chatroomparticipant;
 
 import com.chatappbackend.dto.user.UserDTO;
 import com.chatappbackend.models.ChatRoomParticipant;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ public class ChatRoomParticipantDTO {
 
   private UUID chatRoomId;
 
-  private LocalDateTime joinedAt;
+  private Instant joinedAt;
 
   private boolean hasAccepted;
 

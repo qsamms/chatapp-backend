@@ -17,7 +17,6 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class ChatRoomController {
         ChatRoomParticipant.builder()
             .user(reqUser)
             .chatRoom(chatRoom)
-            .joinedAt(LocalDateTime.now())
+            .joinedAt(Instant.now())
             .hasAccepted(true)
             .build());
     entityManager.flush();
@@ -190,7 +189,7 @@ public class ChatRoomController {
 
     ChatRoomInviteLink invite = chatService.getChatRoomInviteLink(inviteId);
     if (invite == null
-        || LocalDateTime.now().isAfter(invite.getExpiration())
+        || Instant.now().isAfter(invite.getExpiration())
         || chatService.isUserInChatRoom(reqUser, invite.getChatRoom())) {
       return ResponseEntity.badRequest().build();
     }
@@ -199,7 +198,7 @@ public class ChatRoomController {
         ChatRoomParticipant.builder()
             .chatRoom(invite.getChatRoom())
             .user(reqUser)
-            .joinedAt(LocalDateTime.now())
+            .joinedAt(Instant.now())
             .hasAccepted(true)
             .build();
     chatService.saveChatParticipant(newParticipant);

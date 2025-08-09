@@ -2,7 +2,7 @@ package com.chatappbackend.dto.chatroominvite;
 
 import com.chatappbackend.dto.chatroom.ChatRoomDTO;
 import com.chatappbackend.models.ChatRoomInviteLink;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.Getter;
 
@@ -12,7 +12,7 @@ public class ChatRoomInviteLinkDTO {
 
   private ChatRoomDTO chatRoom;
 
-  private LocalDateTime expiration;
+  private Instant expiration;
 
   public ChatRoomInviteLinkDTO(ChatRoomInviteLink inviteLink) {
     this.id = inviteLink.getId();

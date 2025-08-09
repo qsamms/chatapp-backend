@@ -1,7 +1,8 @@
 package com.chatappbackend.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+
+import java.time.Instant;
 import java.util.UUID;
 import lombok.*;
 
@@ -25,7 +26,7 @@ public class ChatRoomParticipant {
   @JoinColumn(nullable = false)
   private ChatRoom chatRoom;
 
-  @Column private LocalDateTime joinedAt;
+  @Column private Instant joinedAt;
 
   @Column(nullable = false)
   @Builder.Default

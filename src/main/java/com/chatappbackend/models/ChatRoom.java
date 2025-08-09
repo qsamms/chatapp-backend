@@ -1,7 +1,7 @@
 package com.chatappbackend.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import lombok.*;
@@ -21,13 +21,16 @@ public class ChatRoom {
   @Column(nullable = false)
   private String name;
 
+  @Column(nullable = false)
+  private boolean isDm;
+
   @ManyToOne
   @JoinColumn(name = "created_by", nullable = false)
   private User createdBy;
 
   @Column(nullable = false)
   @Builder.Default
-  private LocalDateTime createdAt = LocalDateTime.now();
+  private Instant createdAt = Instant.now();
 
   @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Message> messages;

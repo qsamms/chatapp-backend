@@ -7,7 +7,7 @@ import com.chatappbackend.repository.ChatRoomRepository;
 import com.chatappbackend.repository.MessageRepository;
 import jakarta.transaction.Transactional;
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -50,6 +50,21 @@ public class ChatService {
     return chatRoomRepository.findById(chatRoomId).orElseThrow();
   }
 
+  public ChatRoom getOrCreateDm(User user1, User user2) {
+    ChatRoom chatRoom = chatRoomRepository.findDmRoomByParticipants(user1.getId(), user2.getId());
+    if (chatRoom == null) {
+      chatRoom = ChatRoom.builder().name("").isDm(true).createdBy(user1).build();
+      chatRoom = chatRoomRepository.save(chatRoom);
+      List<ChatRoomParticipant> participants = List.of(
+              ChatRoomParticipant.builder().user(user1).hasAccepted(true).joinedAt(Instant.now()).chatRoom(chatRoom).build(),
+              ChatRoomParticipant.builder().user(user2).hasAccepted(true).joinedAt(Instant.now()).chatRoom(chatRoom).build()
+      );
+      chatRoom.setParticipants(participants);
+      chatRoomRepository.save(chatRoom);
+    }
+    return chatRoom;
+  }
+
   public ChatRoom saveChatRoom(ChatRoom chatRoom) {
     return chatRoomRepository.save(chatRoom);
   }
@@ -78,7 +93,7 @@ public class ChatService {
     ChatRoomParticipant chatRoomParticipant =
         chatRoomParticipantRepository.findByChatRoomAndUser(chatRoom, user).orElseThrow();
     chatRoomParticipant.setHasAccepted(true);
-    chatRoomParticipant.setJoinedAt(LocalDateTime.now());
+    chatRoomParticipant.setJoinedAt(Instant.now());
     chatRoomParticipantRepository.save(chatRoomParticipant);
   }
 
@@ -102,8 +117,8 @@ public class ChatService {
   }
 
   public ChatRoomInviteLink generateChatRoomInviteLink(ChatRoom chatRoom) {
-    LocalDateTime expiration = LocalDateTime.now().plusMinutes(5);
+    Instant plusFiveMinutes = Instant.now().plus(Duration.ofMinutes(5));
     return chatRoomInviteLinkRepository.save(
-        ChatRoomInviteLink.builder().expiration(expiration).chatRoom(chatRoom).build());
+        ChatRoomInviteLink.builder().expiration(plusFiveMinutes).chatRoom(chatRoom).build());
   }
 }
