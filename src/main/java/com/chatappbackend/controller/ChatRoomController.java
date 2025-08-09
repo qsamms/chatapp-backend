@@ -59,7 +59,7 @@ public class ChatRoomController {
     entityManager.refresh(chatRoom);
 
     URI location = URI.create("/rooms/" + chatRoom.getId() + "/");
-    return ResponseEntity.created(location).body(new ChatRoomDTO(chatRoom));
+    return ResponseEntity.created(location).body(new ChatRoomDTO(chatRoom, reqUser));
   }
 
   @GetMapping("/")
@@ -68,12 +68,12 @@ public class ChatRoomController {
 
     List<ChatRoomDTO> acceptedChatRooms =
         chatService.getAcceptedUserChatRooms(reqUser.getId()).stream()
-            .map(ChatRoomDTO::new)
+            .map(chatRoom -> new ChatRoomDTO(chatRoom, reqUser))
             .toList();
 
     List<ChatRoomDTO> invitedChatRooms =
         chatService.getInvitedUserChatRooms(reqUser.getId()).stream()
-            .map(ChatRoomDTO::new)
+            .map(chatRoom -> new ChatRoomDTO(chatRoom, reqUser))
             .toList();
 
     return ResponseEntity.ok()
@@ -86,7 +86,7 @@ public class ChatRoomController {
 
     List<ChatRoomDTO> chatRooms =
         chatService.getAcceptedUserChatRooms(reqUser.getId()).stream()
-            .map(ChatRoomDTO::new)
+            .map(chatRoom -> new ChatRoomDTO(chatRoom, reqUser))
             .toList();
 
     return ResponseEntity.ok().body(chatRooms);
@@ -98,7 +98,7 @@ public class ChatRoomController {
 
     List<ChatRoomDTO> chatRooms =
         chatService.getInvitedUserChatRooms(reqUser.getId()).stream()
-            .map(ChatRoomDTO::new)
+            .map(chatRoom -> new ChatRoomDTO(chatRoom, reqUser))
             .toList();
 
     return ResponseEntity.ok().body(chatRooms);
