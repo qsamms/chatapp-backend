@@ -23,7 +23,7 @@ public class FriendRequestDTO {
 
     public FriendRequestDTO(Friendship friendship, User reqUser) {
         this.id = friendship.getId();
-        this.sender = new UserDTO(friendship.getUser1().getUsername().equals(reqUser.getUsername()) ? friendship.getUser1() : friendship.getUser2());
+        this.sender = new UserDTO(friendship.getUser1().getUsername().equals(reqUser.getUsername()) ? friendship.getUser2() : friendship.getUser1());
         this.status = friendship.getFriendshipStatus();
         this.createdAt = friendship.getCreatedAt();
         this.updatedAt = friendship.getUpdatedAt();
