@@ -19,7 +19,7 @@ public class FriendshipService {
     this.userRepository = userRepository;
   }
 
-  public Friendship sendFriendRequest(String senderUsername, String receiverUsername) {
+  public Friendship sendFriendRequest(String senderUsername, String receiverUsername) throws IllegalStateException{
     User sender = userRepository.findByUsername(senderUsername).orElseThrow();
     User receiver = userRepository.findByUsername(receiverUsername).orElseThrow();
 

@@ -1,9 +1,13 @@
 package com.chatappbackend.controller;
 
+import com.chatappbackend.dto.friendship.FriendRequestDTO;
+import com.chatappbackend.dto.friendship.FriendRequestSentDTO;
 import com.chatappbackend.dto.friendship.FriendshipDTO;
 import com.chatappbackend.dto.friendship.FriendshipRequest;
 import com.chatappbackend.models.Friendship;
+import com.chatappbackend.models.User;
 import com.chatappbackend.service.FriendshipService;
+import com.chatappbackend.service.UserService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
@@ -16,24 +20,28 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/friendships")
 public class FriendshipController {
   private final FriendshipService friendshipService;
+  private final UserService userService;
 
-  public FriendshipController(FriendshipService friendshipService) {
+  public FriendshipController(FriendshipService friendshipService, UserService userService) {
     this.friendshipService = friendshipService;
+    this.userService = userService;
   }
 
   @GetMapping("/")
   public ResponseEntity<Map<String, Object>> getFriends(Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+
     List<FriendshipDTO> acceptedFriendships =
         friendshipService.getAcceptedFriendships(principal.getName()).stream()
-            .map(FriendshipDTO::new)
+            .map(friendship -> new FriendshipDTO(friendship, reqUser))
             .toList();
-    List<FriendshipDTO> pendingReceivedFriendships =
+    List<FriendRequestDTO> pendingReceivedFriendships =
         friendshipService.getPendingReceivedFriendships(principal.getName()).stream()
-            .map(FriendshipDTO::new)
+            .map(friendRequest -> new FriendRequestDTO(friendRequest, reqUser))
             .toList();
-    List<FriendshipDTO> pendingSentFriendships =
+    List<FriendRequestSentDTO> pendingSentFriendships =
         friendshipService.getPendingSentFriendships(principal.getName()).stream()
-            .map(FriendshipDTO::new)
+            .map(friendRequest -> new FriendRequestSentDTO(friendRequest, reqUser))
             .toList();
     return ResponseEntity.ok()
         .body(
@@ -48,44 +56,53 @@ public class FriendshipController {
 
   @GetMapping("/accepted/")
   public ResponseEntity<List<FriendshipDTO>> getAcceptedFriends(Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
     List<FriendshipDTO> acceptedFriendships =
         friendshipService.getAcceptedFriendships(principal.getName()).stream()
-            .map(FriendshipDTO::new)
+            .map(friendship -> new FriendshipDTO(friendship, reqUser))
             .toList();
     return ResponseEntity.ok().body(acceptedFriendships);
   }
 
   @GetMapping("/pending-sent/")
-  public ResponseEntity<List<FriendshipDTO>> getPendingSentFriends(Principal principal) {
-    List<FriendshipDTO> pendingSentFriendships =
+  public ResponseEntity<List<FriendRequestSentDTO>> getPendingSentFriends(Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+    List<FriendRequestSentDTO> pendingSentFriendships =
         friendshipService.getPendingSentFriendships(principal.getName()).stream()
-            .map(FriendshipDTO::new)
+            .map(friendRequest -> new FriendRequestSentDTO(friendRequest, reqUser))
             .toList();
     return ResponseEntity.ok().body(pendingSentFriendships);
   }
 
   @GetMapping("/pending-received/")
-  public ResponseEntity<List<FriendshipDTO>> getPendingReceivedFriends(Principal principal) {
-    List<FriendshipDTO> pendingReceivedFriendships =
+  public ResponseEntity<List<FriendRequestDTO>> getPendingReceivedFriends(Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
+    List<FriendRequestDTO> pendingReceivedFriendships =
         friendshipService.getPendingReceivedFriendships(principal.getName()).stream()
-            .map(FriendshipDTO::new)
+            .map(friendRequest -> new FriendRequestDTO(friendRequest, reqUser))
             .toList();
     return ResponseEntity.ok().body(pendingReceivedFriendships);
   }
 
   @PostMapping("/send/")
-  public ResponseEntity<FriendshipDTO> sendFriendRequest(
+  public ResponseEntity<?> sendFriendRequest(
       @Valid @RequestBody FriendshipRequest friendshipRequest, Principal principal) {
-    Friendship friendship =
-        friendshipService.sendFriendRequest(principal.getName(), friendshipRequest.getUsername());
-    URI location = URI.create("/friendships/" + friendship.getId() + "/");
-    return ResponseEntity.created(location).body(new FriendshipDTO(friendship));
+    User reqUser = userService.getUser(principal.getName());
+    try {
+      Friendship friendship =
+              friendshipService.sendFriendRequest(principal.getName(), friendshipRequest.getUsername());
+      URI location = URI.create("/friendships/" + friendship.getId() + "/");
+      return ResponseEntity.created(location).body(new FriendRequestSentDTO(friendship, reqUser));
+    } catch (IllegalStateException e) {
+      return ResponseEntity.badRequest().body(Map.of("message", "Friend request already exists"));
+    }
   }
 
   @PostMapping("/accept/{friendshipId}/")
-  public ResponseEntity<FriendshipDTO> accept(@PathVariable Long friendshipId) {
+  public ResponseEntity<FriendshipDTO> accept(@PathVariable Long friendshipId, Principal principal) {
+    User reqUser = userService.getUser(principal.getName());
     return ResponseEntity.ok()
-        .body(new FriendshipDTO(friendshipService.acceptFriendRequest(friendshipId)));
+        .body(new FriendshipDTO(friendshipService.acceptFriendRequest(friendshipId), reqUser));
   }
 
   @DeleteMapping("/{friendshipId}/")

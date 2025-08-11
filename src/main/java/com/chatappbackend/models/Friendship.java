@@ -2,7 +2,7 @@ package com.chatappbackend.models;
 
 import com.chatappbackend.dto.friendship.FriendshipStatus;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import lombok.*;
 
 @Entity
@@ -35,14 +35,14 @@ public class Friendship {
 
   @Column(nullable = false)
   @Builder.Default
-  private LocalDateTime createdAt = LocalDateTime.now();
+  private Instant createdAt = Instant.now();
 
   @Column(nullable = false)
   @Builder.Default
-  private LocalDateTime updatedAt = LocalDateTime.now();
+  private Instant updatedAt = Instant.now();
 
   @PreUpdate
   public void setUpdatedAt() {
-    this.updatedAt = LocalDateTime.now();
+    this.updatedAt = Instant.now();
   }
 }
