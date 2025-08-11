@@ -41,8 +41,9 @@ public class FriendshipController {
             .toList();
     List<FriendRequestSentDTO> pendingSentFriendships =
         friendshipService.getPendingSentFriendships(principal.getName()).stream()
-            .map(friendRequest -> new FriendRequestSentDTO(friendRequest, reqUser))
+            .map(friendRequest -> new FriendRequestSentDTO(friendRequest))
             .toList();
+
     return ResponseEntity.ok()
         .body(
             Map.of(
@@ -69,7 +70,7 @@ public class FriendshipController {
     User reqUser = userService.getUser(principal.getName());
     List<FriendRequestSentDTO> pendingSentFriendships =
         friendshipService.getPendingSentFriendships(principal.getName()).stream()
-            .map(friendRequest -> new FriendRequestSentDTO(friendRequest, reqUser))
+            .map(friendRequest -> new FriendRequestSentDTO(friendRequest))
             .toList();
     return ResponseEntity.ok().body(pendingSentFriendships);
   }
@@ -92,7 +93,7 @@ public class FriendshipController {
       Friendship friendship =
               friendshipService.sendFriendRequest(principal.getName(), friendshipRequest.getUsername());
       URI location = URI.create("/friendships/" + friendship.getId() + "/");
-      return ResponseEntity.created(location).body(new FriendRequestSentDTO(friendship, reqUser));
+      return ResponseEntity.created(location).body(new FriendRequestSentDTO(friendship));
     } catch (IllegalStateException e) {
       return ResponseEntity.badRequest().body(Map.of("message", "Friend request already exists"));
     }

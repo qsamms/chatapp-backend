@@ -13,7 +13,7 @@ import java.time.Instant;
 public class FriendRequestSentDTO {
     private Long id;
 
-    private UserDTO reciever;
+    private UserDTO receiver;
 
     private FriendshipStatus status;
 
@@ -21,9 +21,10 @@ public class FriendRequestSentDTO {
 
     private Instant updatedAt;
 
-    public FriendRequestSentDTO(Friendship friendship, User reqUser) {
+    public FriendRequestSentDTO(Friendship friendship) {
         this.id = friendship.getId();
-        this.reciever = new UserDTO(!friendship.getUser1().getUsername().equals(reqUser.getUsername()) ? friendship.getUser1() : friendship.getUser2());
+        User receiverUser = friendship.getUser1().getUsername().equals(friendship.getSender().getUsername()) ? friendship.getUser2() : friendship.getUser1();
+        this.receiver = new UserDTO(receiverUser);
         this.status = friendship.getFriendshipStatus();
         this.createdAt = friendship.getCreatedAt();
         this.updatedAt = friendship.getUpdatedAt();
