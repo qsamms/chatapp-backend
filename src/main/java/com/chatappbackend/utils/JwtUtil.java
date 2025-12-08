@@ -15,7 +15,7 @@ public class JwtUtil {
   }
 
   public String generateAccessToken(String username) {
-    long EXPIRATION_TIME_MS = 60 * 60 * 1000; // 1 hour
+    long EXPIRATION_TIME_MS = 60 * 10 * 1000; // 10 minutes
     return Jwts.builder()
         .setSubject(username)
         .setIssuedAt(new Date())
@@ -25,7 +25,7 @@ public class JwtUtil {
   }
 
   public String generateRefreshToken(String username) {
-    long EXPIRATION_TIME_MS = 60 * 60 * 1000 * 24 * 7; // 1 week
+    long EXPIRATION_TIME_MS = 60 * 60 * 1000 * 12; // 12 hours
     return Jwts.builder()
             .setSubject(username)
             .setIssuedAt(new Date())
