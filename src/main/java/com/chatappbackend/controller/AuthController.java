@@ -1,6 +1,7 @@
 package com.chatappbackend.controller;
 
 import com.chatappbackend.dto.auth.AuthRequest;
+import com.chatappbackend.dto.auth.RefreshRequest;
 import com.chatappbackend.dto.auth.SignUpRequest;
 import com.chatappbackend.dto.auth.SignUpResponse;
 import com.chatappbackend.models.User;
@@ -39,7 +40,10 @@ public class AuthController {
   }
 
   @PostMapping("/refresh/")
-  public ResponseEntity<?> refresh(Principal principal) {
+  public ResponseEntity<?> refresh(@Valid @RequestBody RefreshRequest refreshRequest, Principal principal) {
+    if (!jwtUtil.validateToken(refreshRequest.getToken())) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of());
+    }
     String accessToken = jwtUtil.generateAccessToken(principal.getName());
     return ResponseEntity.ok(Map.of("accessToken", accessToken));
   }

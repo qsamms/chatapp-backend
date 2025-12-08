@@ -40,7 +40,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
       String token = extractToken(httpRequest);
       if (token != null) {
         String username = jwtUtil.extractUsername(token);
-        if (jwtUtil.validateToken(token, username)) {
+        if (jwtUtil.validateToken(token)) {
           Authentication authentication =
               new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
           attributes.put("principal", authentication);
