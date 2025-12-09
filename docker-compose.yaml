@@ -37,6 +37,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      ELASTIC_URL: ${ELASTIC_URL}
     ports:
       - "8080:8080"
     volumes:

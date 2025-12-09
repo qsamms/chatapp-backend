@@ -2,7 +2,6 @@ package com.chatappbackend.models;
 
 import com.chatappbackend.dto.user.Role;
 import jakarta.persistence.*;
-
 import java.time.Instant;
 import java.util.Set;
 import lombok.*;
@@ -49,8 +48,7 @@ public class User implements UserDetails {
   @Builder.Default
   private boolean enabled = true;
 
-  @Column
-  private Instant lastHeartbeat;
+  @Column private Instant lastHeartbeat;
 
   @Column(nullable = false, columnDefinition = "boolean default true")
   @Builder.Default

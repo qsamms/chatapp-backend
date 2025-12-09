@@ -150,11 +150,12 @@ public class ChatRoomController {
 
     if (!chatService.isUserInChatRoom(reqUser, chatRoom)) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-              .body(Map.of("message", "User is not in the requested chat room"));
+          .body(Map.of("message", "User is not in the requested chat room"));
     }
 
     List<ChatRoomParticipant> participants = chatService.getUsersInChatRoom(chatRoom.getId(), true);
-    return ResponseEntity.ok().body(participants.stream().map(ChatRoomParticipantDTO::new).toList());
+    return ResponseEntity.ok()
+        .body(participants.stream().map(ChatRoomParticipantDTO::new).toList());
   }
 
   @PostMapping("/{roomId}/invite/")

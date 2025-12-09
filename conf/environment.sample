@@ -1,10 +1,11 @@
 set -a
 
-JWT_SECRET=""
+JWT_SECRET="asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"
 
-DB_USER=""
-DB_PASSWORD=""
-DB_NAME=""
+DB_USER="someuser"
+DB_PASSWORD="somepassword"
+DB_NAME="somedbname"
 
-ELASTIC_USERNAME=""
-ELASTIC_PASSWORD=""
+ELASTIC_USERNAME="someusername"
+ELASTIC_PASSWORD="somepassword"
+ELASTIC_URL="http://elasticsearch:9200"

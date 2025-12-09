@@ -19,7 +19,8 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, UUID> {
       "SELECT cr FROM ChatRoom cr JOIN cr.participants p WHERE p.user.id = :userId AND p.hasAccepted = false")
   List<ChatRoom> findInvitedCharRoomsByUserId(Long userId);
 
-  @Query("""
+  @Query(
+      """
     SELECT cr
     FROM ChatRoom cr
     JOIN cr.participants p
@@ -28,9 +29,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, UUID> {
     GROUP BY cr
     HAVING COUNT(DISTINCT p.user.id) = 2
 """)
-  ChatRoom findDmRoomByParticipants(@Param("user1Id") Long user1Id,
-                                    @Param("user2Id") Long user2Id);
-
+  ChatRoom findDmRoomByParticipants(@Param("user1Id") Long user1Id, @Param("user2Id") Long user2Id);
 
   List<ChatRoom> findByCreatedBy(User user);
 

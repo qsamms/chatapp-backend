@@ -3,10 +3,9 @@ package com.chatappbackend.dto.friendship;
 import com.chatappbackend.dto.user.UserDTO;
 import com.chatappbackend.models.Friendship;
 import com.chatappbackend.models.User;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.Instant;
 
 @Getter
 @Setter
@@ -23,7 +22,11 @@ public class FriendshipDTO {
 
   public FriendshipDTO(Friendship friendship, User reqUser) {
     this.id = friendship.getId();
-    this.friend = new UserDTO(reqUser.getUsername().equals(friendship.getUser1().getUsername()) ? friendship.getUser2() : friendship.getUser1());
+    this.friend =
+        new UserDTO(
+            reqUser.getUsername().equals(friendship.getUser1().getUsername())
+                ? friendship.getUser2()
+                : friendship.getUser1());
     this.status = friendship.getFriendshipStatus();
     this.createdAt = friendship.getCreatedAt();
     this.updatedAt = friendship.getUpdatedAt();

@@ -1,7 +1,6 @@
 package com.chatappbackend.models;
 
 import jakarta.persistence.*;
-
 import java.time.Instant;
 import java.util.UUID;
 import lombok.*;

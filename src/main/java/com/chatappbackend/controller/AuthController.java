@@ -9,7 +9,6 @@ import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
-
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +37,7 @@ public class AuthController {
   @PostMapping("/refresh/")
   public ResponseEntity<?> refresh(@Valid @RequestBody RefreshRequest refreshRequest) {
     if (!jwtUtil.validateToken(refreshRequest.getToken())) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of());
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of());
     }
     Claims tokenClaims = jwtUtil.getTokenClaims(refreshRequest.getToken());
     String accessToken = jwtUtil.generateAccessToken(tokenClaims.getSubject());
@@ -48,7 +47,11 @@ public class AuthController {
   @PostMapping("/signup/")
   public ResponseEntity<SignUpResponse> signup(@Valid @RequestBody SignUpRequest request) {
     User newUser =
-        userService.createUser(request.getEmail(), request.getPassword(), request.getFirstName(), request.getLastName());
+        userService.createUser(
+            request.getEmail(),
+            request.getPassword(),
+            request.getFirstName(),
+            request.getLastName());
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(
             SignUpResponse.builder()

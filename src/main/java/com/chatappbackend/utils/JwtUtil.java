@@ -27,11 +27,11 @@ public class JwtUtil {
   public String generateRefreshToken(String username) {
     long EXPIRATION_TIME_MS = 60 * 60 * 1000 * 12; // 12 hours
     return Jwts.builder()
-            .setSubject(username)
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MS))
-            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-            .compact();
+        .setSubject(username)
+        .setIssuedAt(new Date())
+        .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MS))
+        .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+        .compact();
   }
 
   public String extractUsername(String token) throws MalformedJwtException {
@@ -44,7 +44,11 @@ public class JwtUtil {
   }
 
   public Claims getTokenClaims(String token) throws MalformedJwtException {
-      return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+    return Jwts.parserBuilder()
+        .setSigningKey(getSigningKey())
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
   }
 
   public boolean validateToken(String token) throws ExpiredJwtException {

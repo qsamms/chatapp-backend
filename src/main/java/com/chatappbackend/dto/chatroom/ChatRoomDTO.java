@@ -3,11 +3,10 @@ package com.chatappbackend.dto.chatroom;
 import com.chatappbackend.dto.user.UserDTO;
 import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.ChatRoomParticipant;
+import com.chatappbackend.models.User;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
-
-import com.chatappbackend.models.User;
 import lombok.Getter;
 
 @Getter
@@ -33,10 +32,10 @@ public class ChatRoomDTO {
     this.createdBy = chatRoom.getCreatedBy().getUsername();
     this.isDm = chatRoom.isDm();
     this.participants =
-            chatRoom.getParticipants().stream()
-                    .filter(ChatRoomParticipant::getHasAccepted)
-                    .map(participant -> new UserDTO(participant.getUser()))
-                    .toList();
+        chatRoom.getParticipants().stream()
+            .filter(ChatRoomParticipant::getHasAccepted)
+            .map(participant -> new UserDTO(participant.getUser()))
+            .toList();
     this.otherParticipant = null;
   }
 
@@ -51,7 +50,8 @@ public class ChatRoomDTO {
             .filter(ChatRoomParticipant::getHasAccepted)
             .map(participant -> new UserDTO(participant.getUser()))
             .toList();
-    this.otherParticipant = chatRoom.getParticipants().stream()
+    this.otherParticipant =
+        chatRoom.getParticipants().stream()
             .map(ChatRoomParticipant::getUser)
             .filter(user -> !user.getUsername().equals(reqUser.getUsername()))
             .findFirst()

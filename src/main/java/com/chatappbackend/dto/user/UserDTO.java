@@ -1,9 +1,8 @@
 package com.chatappbackend.dto.user;
 
 import com.chatappbackend.models.User;
-import lombok.Getter;
-
 import java.time.Instant;
+import lombok.Getter;
 
 @Getter
 public class UserDTO {

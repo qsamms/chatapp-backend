@@ -6,8 +6,6 @@ import com.chatappbackend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-
 @Service
 public class UserService {
   private final UserRepository userRepository;
@@ -27,8 +25,8 @@ public class UserService {
     User user =
         User.builder()
             .username(email)
-                .firstName(firstName)
-                .lastName(lastName)
+            .firstName(firstName)
+            .lastName(lastName)
             .password(passwordEncoder.encode(rawPassword))
             .email(email)
             .role(Role.USER)

@@ -91,7 +91,7 @@ public class FriendshipController {
     User reqUser = userService.getUser(principal.getName());
     try {
       Friendship friendship =
-              friendshipService.sendFriendRequest(principal.getName(), friendshipRequest.getUsername());
+          friendshipService.sendFriendRequest(principal.getName(), friendshipRequest.getUsername());
       URI location = URI.create("/friendships/" + friendship.getId() + "/");
       return ResponseEntity.created(location).body(new FriendRequestSentDTO(friendship));
     } catch (IllegalStateException e) {
@@ -100,7 +100,8 @@ public class FriendshipController {
   }
 
   @PostMapping("/accept/{friendshipId}/")
-  public ResponseEntity<FriendshipDTO> accept(@PathVariable Long friendshipId, Principal principal) {
+  public ResponseEntity<FriendshipDTO> accept(
+      @PathVariable Long friendshipId, Principal principal) {
     User reqUser = userService.getUser(principal.getName());
     return ResponseEntity.ok()
         .body(new FriendshipDTO(friendshipService.acceptFriendRequest(friendshipId), reqUser));

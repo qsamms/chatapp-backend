@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class UpdateUserReqDTO {
-    private String bio;
+  private String bio;
 
-    private String displayName;
+  private String displayName;
 
-    private boolean displayActiveStatus;
+  private boolean displayActiveStatus;
 }

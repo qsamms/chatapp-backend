@@ -6,8 +6,8 @@ import com.chatappbackend.repository.ChatRoomParticipantRepository;
 import com.chatappbackend.repository.ChatRoomRepository;
 import com.chatappbackend.repository.MessageRepository;
 import jakarta.transaction.Transactional;
-import java.time.Instant;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -55,10 +55,20 @@ public class ChatService {
     if (chatRoom == null) {
       chatRoom = ChatRoom.builder().name("").isDm(true).createdBy(user1).build();
       chatRoom = chatRoomRepository.save(chatRoom);
-      List<ChatRoomParticipant> participants = List.of(
-              ChatRoomParticipant.builder().user(user1).hasAccepted(true).joinedAt(Instant.now()).chatRoom(chatRoom).build(),
-              ChatRoomParticipant.builder().user(user2).hasAccepted(true).joinedAt(Instant.now()).chatRoom(chatRoom).build()
-      );
+      List<ChatRoomParticipant> participants =
+          List.of(
+              ChatRoomParticipant.builder()
+                  .user(user1)
+                  .hasAccepted(true)
+                  .joinedAt(Instant.now())
+                  .chatRoom(chatRoom)
+                  .build(),
+              ChatRoomParticipant.builder()
+                  .user(user2)
+                  .hasAccepted(true)
+                  .joinedAt(Instant.now())
+                  .chatRoom(chatRoom)
+                  .build());
       chatRoom.setParticipants(participants);
       chatRoomRepository.save(chatRoom);
     }
