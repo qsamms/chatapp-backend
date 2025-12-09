@@ -22,6 +22,6 @@ build:
 
 .PHONY: run-docker
 run-docker:
-	docker stop backend postgres || true
-	docker rm backend postgres || true
+	docker stop backend postgres es || true
+	docker rm backend postgres es || true
 	. conf/set_env_docker.sh && docker-compose up -d

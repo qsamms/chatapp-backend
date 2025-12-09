@@ -13,6 +13,10 @@ RUN useradd -ms /bin/bash chat
 
 RUN apt-get update && apt-get install -y ffmpeg vim-tiny
 
+COPY ./conf/docker_entrypoint.sh /
+RUN chown -R chat:chat /docker_entrypoint.sh
+RUN chmod +x /docker_entrypoint.sh
+
 WORKDIR /app
 
 RUN mkdir -p /app/uploads /app/videos && chown -R chat:chat /app
@@ -24,4 +28,4 @@ COPY --from=builder /app/target/chatapp-backend-0.0.1-SNAPSHOT.jar .
 
 EXPOSE 8080
 
-ENTRYPOINT exec java -jar chatapp-backend-0.0.1-SNAPSHOT.jar > /var/log/chatapp.log 2>&1
+ENTRYPOINT /docker_entrypoint.sh
