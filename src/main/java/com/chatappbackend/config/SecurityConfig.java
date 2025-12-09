@@ -37,7 +37,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
-                        "/auth/login/", "/auth/signup/", "/ping/", "/error", "/videos/**", "/ws/**")
+                        "/auth/**", "/ping/", "/error", "/videos/**", "/ws/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

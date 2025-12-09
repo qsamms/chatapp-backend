@@ -7,13 +7,12 @@ import com.chatappbackend.dto.auth.SignUpResponse;
 import com.chatappbackend.models.User;
 import com.chatappbackend.service.UserService;
 import com.chatappbackend.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 
-import java.security.Principal;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,11 +36,12 @@ public class AuthController {
   }
 
   @PostMapping("/refresh/")
-  public ResponseEntity<?> refresh(@Valid @RequestBody RefreshRequest refreshRequest, Principal principal) {
+  public ResponseEntity<?> refresh(@Valid @RequestBody RefreshRequest refreshRequest) {
     if (!jwtUtil.validateToken(refreshRequest.getToken())) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of());
     }
-    String accessToken = jwtUtil.generateAccessToken(principal.getName());
+    Claims tokenClaims = jwtUtil.getTokenClaims(refreshRequest.getToken());
+    String accessToken = jwtUtil.generateAccessToken(tokenClaims.getSubject());
     return ResponseEntity.ok(Map.of("accessToken", accessToken));
   }
 

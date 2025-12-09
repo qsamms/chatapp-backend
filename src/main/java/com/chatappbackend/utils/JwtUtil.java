@@ -43,6 +43,10 @@ public class JwtUtil {
         .getSubject();
   }
 
+  public Claims getTokenClaims(String token) throws MalformedJwtException {
+      return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+  }
+
   public boolean validateToken(String token) throws ExpiredJwtException {
     return !isTokenExpired(token);
   }
