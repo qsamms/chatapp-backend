@@ -26,6 +26,7 @@ if [ "$STATUS" -eq 404 ]; then
     "mappings": {
       "properties": {
         "user": { "type": "keyword" },
+        "room": { "type": "keyword" },
         "text": { "type": "text" },
         "timestamp": { "type": "date" }
       }
