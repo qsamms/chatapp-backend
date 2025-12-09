@@ -1,7 +1,7 @@
 
 .PHONY: run
 run:
-	. conf/set_env.sh && ./mvnw spring-boot:run
+	. conf/environment.sh && ./mvnw spring-boot:run
 
 .PHONY: install
 install:
@@ -9,7 +9,7 @@ install:
 
 .PHONY: test_local
 test_local:
-	. conf/set_env.sh && mvn test
+	. conf/environment.sh && mvn test
 
 .PHONY: pre-commit-install
 pre-commit-install:
@@ -24,4 +24,4 @@ build:
 run-docker:
 	docker stop backend postgres es || true
 	docker rm backend postgres es || true
-	. conf/set_env_docker.sh && docker-compose up -d
+	. conf/environment.sh && docker-compose up -d
