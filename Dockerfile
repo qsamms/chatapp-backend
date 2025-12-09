@@ -11,7 +11,7 @@ FROM eclipse-temurin:21-jdk-jammy
 
 RUN useradd -ms /bin/bash chat
 
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apt-get update && apt-get install -y ffmpeg vim-tiny
 
 WORKDIR /app
 
