@@ -21,7 +21,7 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
     return ClientConfiguration.builder()
         .connectedTo(elasticUrl)
         .withBasicAuth(username, password)
-        .withConnectTimeout(30)
+        .withConnectTimeout(5000)
         .build();
   }
 }
