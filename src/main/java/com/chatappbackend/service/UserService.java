@@ -3,6 +3,7 @@ package com.chatappbackend.service;
 import com.chatappbackend.dto.user.Role;
 import com.chatappbackend.models.User;
 import com.chatappbackend.repository.UserRepository;
+import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,10 @@ public class UserService {
 
   public User getUser(String username) {
     return userDetailsService.loadUserByUsername(username);
+  }
+
+  public List<User> getUsersByIds(List<Long> userIds) {
+    return userRepository.findByIdIn(userIds);
   }
 
   public User getUserByEmail(String email) {

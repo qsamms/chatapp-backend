@@ -3,6 +3,8 @@ package com.chatappbackend.controller;
 import com.chatappbackend.document.MessageDocument;
 import com.chatappbackend.dto.chatroom.ChatRoomDTO;
 import com.chatappbackend.dto.search.SearchRequestDTO;
+import com.chatappbackend.dto.search.SearchResponseDTO;
+import com.chatappbackend.dto.user.UserDTO;
 import com.chatappbackend.models.ChatRoom;
 import com.chatappbackend.models.User;
 import com.chatappbackend.service.ChatService;
@@ -12,6 +14,7 @@ import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +44,20 @@ public class SearchController {
     List<MessageDocument> messages =
         elasticService.searchMessages(
             searchRequest.getText(), chatRooms.stream().map(ChatRoomDTO::new).toList());
-    return ResponseEntity.ok().body(Map.of("messages", messages));
+
+    List<Long> userIds = messages.stream().map(m -> m.getUser()).toList();
+    List<User> users = userService.getUsersByIds(userIds);
+    Map<Long, UserDTO> userMap =
+        users.stream().collect(Collectors.toMap(User::getId, UserDTO::new));
+
+    List<SearchResponseDTO> searchResponse =
+        messages.stream()
+            .map(
+                m ->
+                    new SearchResponseDTO(
+                        userMap.get(m.getUser()), m.getRoom(), m.getText(), m.getTimestamp()))
+            .toList();
+
+    return ResponseEntity.ok().body(Map.of("hits", searchResponse));
   }
 }

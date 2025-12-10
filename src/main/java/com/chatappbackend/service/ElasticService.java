@@ -44,6 +44,7 @@ public class ElasticService {
           elasticClient.search(
               s ->
                   s.index("messages")
+                      .size(50)
                       .query(
                           q ->
                               q.bool(
