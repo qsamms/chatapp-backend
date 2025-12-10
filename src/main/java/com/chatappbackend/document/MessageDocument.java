@@ -1,17 +1,21 @@
 package com.chatappbackend.document;
 
 import java.time.Instant;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.jackson.Jacksonized;
 
-@Getter
+@Jacksonized
 @Setter
 @Builder
 public class MessageDocument {
-  private Long user;
-  private String room;
-  private String text;
+  @Getter private Long user;
+  @Getter private String room;
+  @Getter private String text;
+
+  @Getter(AccessLevel.NONE)
   private Instant timestamp;
 
   public String getTimestamp() {
