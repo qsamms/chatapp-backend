@@ -14,11 +14,14 @@ public class SearchResponseDTO {
   private ChatRoomSmallDTO room;
   private String text;
   private String timestamp;
+  private String messageId;
 
-  public SearchResponseDTO(UserDTO user, ChatRoomSmallDTO chatRoom, String text, String timestamp) {
+  public SearchResponseDTO(
+      UserDTO user, ChatRoomSmallDTO chatRoom, String text, String timestamp, String messageId) {
     this.user = user;
     this.room = chatRoom;
     this.text = text;
     this.timestamp = timestamp;
+    this.messageId = messageId;
   }
 }

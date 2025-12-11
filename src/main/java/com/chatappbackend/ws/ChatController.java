@@ -60,6 +60,7 @@ public class ChatController {
     elasticService.indexMessage(
         MessageDocument.builder()
             .user(user.getId())
+            .messageId(msg.getId().toString())
             .room(chatRoom.getId().toString())
             .text(message.getContent())
             .timestamp(Instant.now())

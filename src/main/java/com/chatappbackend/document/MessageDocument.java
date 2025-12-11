@@ -14,6 +14,7 @@ public class MessageDocument {
   @Getter private Long user;
   @Getter private String room;
   @Getter private String text;
+  @Getter private String messageId;
 
   @Getter(AccessLevel.NONE)
   private Instant timestamp;

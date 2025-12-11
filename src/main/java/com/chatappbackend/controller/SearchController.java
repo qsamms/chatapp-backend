@@ -17,10 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/search")
@@ -36,7 +33,7 @@ public class SearchController {
     this.userService = userService;
   }
 
-  @GetMapping("/")
+  @PostMapping("/")
   public ResponseEntity<?> searchAll(
       @Valid @RequestBody SearchRequestDTO searchRequest, Principal principal) {
     String username = principal.getName();
@@ -62,7 +59,8 @@ public class SearchController {
                         userMap.get(m.getUser()),
                         chatRoomMap.get(UUID.fromString(m.getRoom())),
                         m.getText(),
-                        m.getTimestamp()))
+                        m.getTimestamp(),
+                        m.getMessageId()))
             .toList();
 
     return ResponseEntity.ok().body(Map.of("hits", searchResponse));
