@@ -6,7 +6,7 @@ import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.chatappbackend.document.MessageDocument;
-import com.chatappbackend.dto.chatroom.ChatRoomDTO;
+import com.chatappbackend.dto.chatroom.ChatRoomSmallDTO;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.scheduling.annotation.Async;
@@ -33,7 +33,7 @@ public class ElasticService {
     }
   }
 
-  public List<MessageDocument> searchMessages(String text, List<ChatRoomDTO> chatRooms) {
+  public List<MessageDocument> searchMessages(String text, List<ChatRoomSmallDTO> chatRooms) {
     try {
       List<FieldValue> roomIds =
           chatRooms.stream()
