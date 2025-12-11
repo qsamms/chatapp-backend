@@ -131,4 +131,12 @@ public class ChatService {
     return chatRoomInviteLinkRepository.save(
         ChatRoomInviteLink.builder().expiration(plusFiveMinutes).chatRoom(chatRoom).build());
   }
+
+  public Message getMessage(UUID messageId) {
+    return messageRepository.getReferenceById(messageId);
+  }
+
+  public void deleteMessage(UUID messageId) {
+    messageRepository.deleteById(messageId);
+  }
 }

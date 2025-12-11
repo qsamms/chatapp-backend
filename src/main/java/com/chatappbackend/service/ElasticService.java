@@ -33,6 +33,20 @@ public class ElasticService {
     }
   }
 
+  @Async
+  public void removeFromIndex(MessageDocument messageDocument) {
+    try {
+      elasticClient.deleteByQuery(
+          d ->
+              d.index("messages")
+                  .query(
+                      q ->
+                          q.term(t -> t.field("messageId").value(messageDocument.getMessageId()))));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   public List<MessageDocument> searchMessages(String text, List<ChatRoomSmallDTO> chatRooms) {
     try {
       List<FieldValue> roomIds =
